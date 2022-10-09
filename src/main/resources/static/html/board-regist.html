@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BoardRegist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/prism-okaidia.css">
+    <link rel="stylesheet" href="../css/custom.min.css">
+</head>
+<body>
+<div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+    <div class="container">
+        <a href="../" class="navbar-brand">My Board</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-md-auto">
+                <li class="nav-item">
+                    <button type="button" class="btn btn-secondary my-2 my-sm-0">로그인</button>
+                    <button type="button" class="btn btn-secondary my-2 my-sm-0">회원가입</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="bs-docs-section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header">
+                    <h1 id="forms">게시글 등록</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="bs-component">
+                    <form>
+                        <fieldset>
+                            <div class="form-group row">
+                                <label for="staticEmail" class="col-sm-2 col-form-label">아이디</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly="" class="form-control-plaintext" id="staticEmail" value="asd123">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" class="form-label mt-4">제목</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleTextarea" class="form-label mt-4">내용</label>
+                                <textarea class="form-control" id="exampleTextarea" rows="12"></textarea>
+                            </div>
+                            <div class="form-group ㅡ">
+                                <label for="formFile" class="form-label mt-4">첨부파일</label>
+                                <input class="form-control" type="file" id="formFile">
+                            </div>
+                          <button type="submit" class="btn btn-primary mt-4">등록</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <footer id="footer">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="list-unstyled">
+                    <li class="float-end"><a href="#top">Back to top</a></li>
+                    <li><a href="https://blog.bootswatch.com/">Blog</a></li>
+                    <li><a href="https://blog.bootswatch.com/rss/">RSS</a></li>
+                    <li><a href="https://twitter.com/bootswatch">Twitter</a></li>
+                    <li><a href="https://github.com/thomaspark/bootswatch">GitHub</a></li>
+                    <li><a href="../help/#api">API</a></li>
+                    <li><a href="../help/#donate">Donate</a></li>
+                </ul>
+                <p>Made by <a href="https://thomaspark.co/">Thomas Park</a>.</p>
+                <p>Code released under the <a href="https://github.com/thomaspark/bootswatch/blob/master/LICENSE">MIT License</a>.</p>
+                <p>Based on <a href="https://getbootstrap.com/" rel="nofollow">Bootstrap</a>. Icons from <a href="https://icons.getbootstrap.com/" rel="nofollow">Bootstrap Icons</a>. Web fonts from <a href="https://fonts.google.com/" rel="nofollow">Google</a>.</p>
+
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
