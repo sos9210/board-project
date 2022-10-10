@@ -1,6 +1,7 @@
 package com.example.board.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,7 +10,16 @@ import java.time.LocalDateTime;
 
 @Table(name = "MEMBERS")
 @Entity @Getter
+@NoArgsConstructor
 public class Member {
+    public Member(String memberId, String memberName, String password, String authLevel, LocalDateTime registDate, String registIp) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.password = password;
+        this.authLevel = authLevel;
+        this.registDate = registDate;
+        this.registIp = registIp;
+    }
 
     @Id
     private String memberId;                //회원아이디

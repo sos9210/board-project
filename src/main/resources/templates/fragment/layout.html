@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="fragment/header :: header"/>
+<body>
+<div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+    <div class="container">
+        <a href="../" class="navbar-brand">My Board</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-md-auto">
+                <li class="nav-item">
+                    <button type="button" class="btn btn-secondary my-2 my-sm-0">로그인</button>
+                    <button type="button" class="btn btn-secondary my-2 my-sm-0">회원가입</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div layout:fragment="content"></div>
+<footer th:replace="fragment/footer :: footer"/>
+</div>
+</body>
+</html>
