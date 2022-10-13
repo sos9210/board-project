@@ -20,7 +20,7 @@ class MemberRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @DisplayName("회원등록")
+    @DisplayName("회원가입")
     @Test
     void 회원등록() {
         //given
@@ -36,7 +36,7 @@ class MemberRepositoryTest {
     }
 
 
-    @DisplayName("회원등록")
+    @DisplayName("회원조회")
     @Test
     void 회원조회() {
         //given
