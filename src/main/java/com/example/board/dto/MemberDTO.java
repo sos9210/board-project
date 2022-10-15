@@ -12,13 +12,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class MemberDTO {
-    @NotBlank @NotNull
-    @Size(min = 6, max = 20)
+    @NotBlank(message = "{error.required.input}") @NotNull(message = "{error.required.input}")
+    @Size(min = 6, max = 20, message = "{error.size.input}")
     private String memberId;                //회원아이디
-    @NotBlank @NotNull
+
+    @NotBlank(message = "{error.required.input}") @NotNull(message = "{error.required.input}")
     private String memberName;              //회원이름
+
     // 최소 8자리에서 최대20자리 숫자, 문자, 특수문자 각각 1개 이상
-    @NotNull @NotBlank @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$")
+    @NotNull(message = "{error.required.input}") @NotBlank(message = "{error.required.input}")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$", message = "{error.pattern.password}")
     private String password;                //암호
     private String authLevel;               //권한등급
     private LocalDateTime registDate;       //등록일자

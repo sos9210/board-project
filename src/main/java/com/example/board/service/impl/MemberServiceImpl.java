@@ -4,11 +4,14 @@ import com.example.board.domain.Member;
 import com.example.board.repository.MemberRepository;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+
     private final MemberRepository memberRepository;
 
     @Override
