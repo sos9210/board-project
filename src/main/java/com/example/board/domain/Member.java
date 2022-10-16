@@ -31,4 +31,8 @@ public class Member {
     private String registIp;                //등록IP
     private LocalDateTime updateDate;       //수정일자
     private String updateIp;                //수정IP
+
+    public void encodePassword(String encodePassword) {
+        this.password = encodePassword;
+    }
 }
