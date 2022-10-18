@@ -9,26 +9,25 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-
     private final MemberRepository memberRepository;
     @Override
     public String memberJoin(Member member) {
         Optional<Member> findByMember = memberRepository.findById(member.getMemberId());
         if(!findByMember.isEmpty()){
-            member.encodePassword(member.getPassword());
             throw new IllegalArgumentException("중복ID가 존재합니다.");
         }
+        member.encodePassword(passwordEncoder().encode(member.getPassword()));
         return memberRepository.save(member).getMemberId();
     }
 
@@ -40,5 +39,9 @@ public class MemberServiceImpl implements MemberService {
 
     private Collection<? extends GrantedAuthority> authorities(String authLevel) {
         return List.of(new SimpleGrantedAuthority("ROLE_" + authLevel));
+    }
+
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

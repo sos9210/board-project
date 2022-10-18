@@ -7,13 +7,12 @@ import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import java.time.LocalDateTime;
 public class LoginController {
 
     private final MemberService memberService;
-    private final PasswordEncoder passwordEncoder;
+
     @GetMapping("board/user/login")
     public String memberLoginForm() {
         return "view/loginForm";
@@ -35,6 +34,7 @@ public class LoginController {
     public String memberLogin(MemberDTO memberDTO) {
         try{
             UserDetails userDetails = memberService.loadUserByUsername(memberDTO.getMemberId());
+
             log.info("사용자 정보 {}",userDetails);
         }catch (UsernameNotFoundException e){
             log.info("사용자 정보를 찾을 수 없습니다.",e);
@@ -55,7 +55,6 @@ public class LoginController {
             return "view/memberJoinForm";
         }
         dto.setAuthLevel(MemberAuthLevelEnum.USER.name());
-        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         Member member = new Member(dto.getMemberId(),dto.getMemberName(),dto.getPassword(),dto.getAuthLevel(), LocalDateTime.now(),request.getRemoteAddr());
 
         try{
