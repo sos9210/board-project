@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 
 @Table(name = "MEMBERS")
 @Entity @Getter
-@NoArgsConstructor
 public class Member {
+    public Member() {
+    }
+
     public Member(String memberId, String memberName, String password, String authLevel, LocalDateTime registDate, String registIp) {
         this.memberId = memberId;
         this.memberName = memberName;
