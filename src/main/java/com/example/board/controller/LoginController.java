@@ -38,9 +38,8 @@ public class LoginController {
             log.info("사용자 정보 {}",userDetails);
         }catch (UsernameNotFoundException e){
             log.info("사용자 정보를 찾을 수 없습니다.",e);
-            return "view/loginForm";
         }
-        return "redirect:/board/user/";
+        return "view/loginForm";
     }
 
     @GetMapping("board/user/member-join")

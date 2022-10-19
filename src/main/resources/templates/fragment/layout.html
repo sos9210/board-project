@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
           xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head th:replace="fragment/header :: header"/>
 <body>
@@ -11,9 +12,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-md-auto">
+                <div sec:authorize="isAuthenticated()" class="bs-component"><h3 th:text="'안녕하세요. '+${#authentication.name}+'님'">안녕하세요. 회원님</h3></div>
                 <li class="nav-item">
-                    <a href="/board/user/login" class="btn btn-secondary my-2 my-sm-0">로그인</a>
-                    <a href="/board/user/member-join" class="btn btn-secondary my-2 my-sm-0">회원가입</a>
+                    <a sec:authorize="!isAuthenticated()" href="/board/user/login" class="btn btn-secondary my-2 my-sm-0">로그인</a>
+                    <a sec:authorize="hasRole('ROLE_ADMIN')" href="/board/admin/member" class="btn btn-secondary my-2 my-sm-0">회원관리</a>
+                    <a sec:authorize="isAuthenticated()" href="/board/user/logout" class="btn btn-secondary my-2 my-sm-0">로그아웃</a>
+                    <a sec:authorize="!isAuthenticated()" href="/board/user/member-join" class="btn btn-secondary my-2 my-sm-0">회원가입</a>
                 </li>
             </ul>
         </div>

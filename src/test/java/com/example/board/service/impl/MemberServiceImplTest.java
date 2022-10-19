@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -68,7 +69,7 @@ class MemberServiceImplTest {
     }
 
     @Test
-    void 로그인_성공() {
+    void 회원_인증_성공() {
         //given
         MemberService memberService = getMemberService();
         PasswordEncoder delegatingPasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -87,6 +88,24 @@ class MemberServiceImplTest {
         //then
         Assertions.assertTrue(delegatingPasswordEncoder.matches(loginMember.getPassword(), user.getPassword()));
         Assertions.assertTrue(user.isEnabled());
+    }
+
+    @Test
+    void 찾을_수_없는_회원_로그인_시도() {
+        //given
+        MemberService memberService = getMemberService();
+        Member member = new Member("asd123", "user11", "Asd123!@#", MemberAuthLevelEnum.USER.name(), LocalDateTime.now(), "127.0.0.1");
+
+        given(memberRepository.save(member)).willReturn(member);
+        given(memberRepository.findById("asd123123")).willThrow(UsernameNotFoundException.class);
+        given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
+
+        memberService.memberJoin(member);
+
+        //when //then
+        Assertions.assertThrows(UsernameNotFoundException.class ,() -> memberService.loadUserByUsername("asd123123"));
+        Assertions.assertEquals("asd123",memberRepository.findById("asd123").get().getMemberId());
+
     }
 
 }
