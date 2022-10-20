@@ -14,13 +14,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+
 @EnableWebSecurity
 @Configuration @RequiredArgsConstructor
 public class BoardSecurityConfig {
 
     private final MemberService memberService;
     private final AuthenticationProvider authenticationProvider;
-
+    private final AuthenticationFailureHandler failureHandler;
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -37,7 +39,7 @@ public class BoardSecurityConfig {
                 .passwordParameter("password")
                 .loginProcessingUrl("/board/user/login")
                 .defaultSuccessUrl("/board/user/common")
-                .failureForwardUrl("/board/user/login")
+                .failureHandler(failureHandler)
                 .and()
                 .logout()
                 .logoutUrl("/board/user/logout")
