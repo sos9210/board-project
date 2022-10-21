@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public interface MemberService  extends UserDetailsService {
-    String memberJoin(Member member);
+    String joinMember(Member member);
     PasswordEncoder passwordEncoder();
+    Member findMember(String memberId);
 }

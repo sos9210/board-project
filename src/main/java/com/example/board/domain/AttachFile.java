@@ -7,6 +7,16 @@ import java.time.LocalDateTime;
 
 @Entity @Getter
 public class AttachFile {
+    public AttachFile(String realFileName, String storedFileName, String extension, long sized, String savedPath, Board board, LocalDateTime registDate, String registIp) {
+        this.realFileName = realFileName;
+        this.storedFileName = storedFileName;
+        this.extension = extension;
+        this.sized = sized;
+        this.savedPath = savedPath;
+        this.board = board;
+        this.registDate = registDate;
+        this.registIp = registIp;
+    }
 
     @GeneratedValue @Id
     private Long attachFileSn;              //첨부파일순번
