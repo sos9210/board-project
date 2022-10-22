@@ -59,6 +59,10 @@ public class BoardServiceImpl implements BoardService {
             String extension = originalFilenameAndExt[1];                               //확장자
             String storedFileName = String.valueOf(UUID.randomUUID())+"."+extension;    //저장파일명
             String uploadPath = rootPath+"/upload/"+board.getBoardSn()+"/";             //업로드경로
+            File file = new File(uploadPath);
+            if(!file.exists()){
+                file.mkdir();
+            }
 
             multipartFile.transferTo(new File(uploadPath+storedFileName));     //파일생성
 
