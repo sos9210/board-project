@@ -33,7 +33,7 @@ class BoardRepositoryTest {
     @Autowired
     private EntityManager em;
 
-    @DisplayName("게시글 등록")
+    @DisplayName("게시글 등록 상세조회")
     @Test
     void saveBoard(){
         //given
