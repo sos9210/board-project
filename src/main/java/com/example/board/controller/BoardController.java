@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -52,5 +53,12 @@ public class BoardController {
             model.addAttribute("message","파일 업로드 요청 오류입니다.");
             return "view/boardWriteForm";
         }
+    }
+
+    @GetMapping("/board/user/forum/{boardSn}")
+    public String boardView(@PathVariable("boardSn") Long boardSn, Model model) {
+        Board board = boardService.viewBoard(boardSn);
+        model.addAttribute("view",board);
+        return "view/boardView";
     }
 }

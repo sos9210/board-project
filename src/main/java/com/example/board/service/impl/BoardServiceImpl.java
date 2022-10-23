@@ -15,10 +15,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +24,13 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
+
+
+    @Override
+    public Board viewBoard(Long boardSn) {
+        Board findBoard = boardRepository.findById(boardSn).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
+        return findBoard;
+    }
 
     @Override
     public Long writeBoard(Board board, MultipartHttpServletRequest request) throws IOException {

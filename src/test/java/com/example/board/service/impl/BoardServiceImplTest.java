@@ -26,10 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -47,6 +44,25 @@ class BoardServiceImplTest {
     @BeforeEach
     private void getBoardService() {
        boardService = new BoardServiceImpl(boardRepository,attachFileRepository);
+    }
+
+    @Test
+    void 게시글_상세조회() throws IOException {
+        //given
+        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
+        given(boardRepository.save(board)).willReturn(board);
+        Long boardSn = boardService.writeBoard(board, new MockMultipartHttpServletRequest());
+
+        given(boardRepository.findById(boardSn)).willReturn(Optional.of(board));
+
+        //when
+        Board findBoard = boardService.viewBoard(boardSn);
+
+        //then
+        Assertions.assertEquals("asd123",findBoard.getMember().getMemberId());
+        Assertions.assertEquals("안녕하세요.",findBoard.getSubject());
+
     }
 
     @Test
