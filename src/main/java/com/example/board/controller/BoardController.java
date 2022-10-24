@@ -28,6 +28,12 @@ public class BoardController {
     private final BoardService boardService;
     private final MemberService memberService;
 
+    @GetMapping("/board/user/forums")
+    public String boardForums() {
+
+        return "view/boardForums";
+    }
+
     @GetMapping("/board/user/forum/write")
     public String boardWriteForm() {
         return "view/boardWriteForm";
