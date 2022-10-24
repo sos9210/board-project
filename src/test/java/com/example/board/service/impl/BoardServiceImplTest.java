@@ -6,6 +6,7 @@ import com.example.board.domain.Member;
 import com.example.board.repository.AttachFileRepository;
 import com.example.board.repository.BoardRepository;
 import com.example.board.service.BoardService;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,17 +19,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,12 +34,14 @@ class BoardServiceImplTest {
     BoardRepository boardRepository;
     @Mock
     AttachFileRepository attachFileRepository;
+    @Mock
+    JPAQueryFactory jpaQueryFactory;
 
     BoardService boardService;
 
     @BeforeEach
     private void getBoardService() {
-       boardService = new BoardServiceImpl(boardRepository,attachFileRepository);
+       boardService = new BoardServiceImpl(boardRepository,attachFileRepository,jpaQueryFactory);
     }
 
     @Test
