@@ -7,6 +7,8 @@ import com.example.board.service.BoardService;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -29,8 +31,9 @@ public class BoardController {
     private final MemberService memberService;
 
     @GetMapping("/board/user/forums")
-    public String boardForums() {
-
+    public String boardForums(BoardDTO dto, Pageable pageable, Model model) {
+        Page<BoardDTO> boardDTOPage = boardService.listForum(dto, pageable);
+        model.addAttribute("boardList",boardDTOPage);
         return "view/boardForums";
     }
 
