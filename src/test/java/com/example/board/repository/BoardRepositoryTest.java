@@ -2,6 +2,11 @@ package com.example.board.repository;
 
 import com.example.board.domain.Board;
 import com.example.board.domain.Member;
+import com.example.board.domain.QBoard;
+import com.example.board.dto.BoardDTO;
+import com.example.board.dto.QBoardDTO;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,46 +39,67 @@ class BoardRepositoryTest {
     @Autowired
     private EntityManager em;
 
-    @DisplayName("게시글 등록 상세조회")
+    private JPAQueryFactory queryFactory;
+
+
+
     @Test
-    void saveBoard(){
+    void 게시글_등록_상세조회(){
         //given
         Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
 
-        Board saveBoard = boardRepository.save(board);
+        em.persist(board);
 
         //when
-        Board findBoard = boardRepository.findById(saveBoard.getBoardSn()).orElseGet(Board::new);
+        Board findBoard = boardRepository.findById(board.getBoardSn()).orElseGet(Board::new);
 
         //then
-        Assertions.assertEquals(saveBoard,findBoard);
-        Assertions.assertEquals(saveBoard.getBoardSn(),findBoard.getBoardSn());
+        Assertions.assertEquals(board,findBoard);
+        Assertions.assertEquals(board.getBoardSn(),findBoard.getBoardSn());
     }
 
-    @DisplayName("전체목록조회")
     @Test
-    void findAll(){
+    void 전체목록조회(){
         //given
+        queryFactory = new JPAQueryFactory(em);
+        Pageable pageable = PageRequest.of(0,10);
+
         Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
-        memberRepository.save(member);
-        em.flush();
+        em.persist(member);
 
         for (int i = 0; i < 20; i++) {
             Board board = new Board("title"+i,"content"+i,member,"N",LocalDateTime.now(),"127.0.0.1");
-            boardRepository.save(board);
+            em.persist(board);
         }
-        PageRequest pageRequest = PageRequest.of(0,10, Sort.by(Sort.Direction.DESC,"boardSn"));
+        em.flush();
+        em.clear();
 
         //when
-        Page<Board> boardPage = boardRepository.findAll(pageRequest);
+        QBoard board = QBoard.board;
+        Long countQuery = queryFactory
+                .select(board.count())
+                .from(board).fetchOne();
+
+        long offset = pageable.getOffset();
+        int pageSize = pageable.getPageSize();
+        List<BoardDTO> boardList = queryFactory
+                .select(new QBoardDTO(
+                        board.boardSn,
+                        board.subject,
+                        board.content,
+                        board.member.memberId,
+                        board.registDate
+                ))
+                .from(board)
+                .orderBy(board.registDate.desc())
+                .offset(offset)
+                .limit(pageSize)
+                .fetch();
+
 
         //then
-        List<Board> boardList = boardPage.getContent();
-        long totalCnt = boardPage.getTotalElements();
-        long totalPages = boardPage.getTotalPages();
+        Assertions.assertEquals(20L,countQuery);
         Assertions.assertEquals(10,boardList.size());
-        Assertions.assertEquals(20,totalCnt);
-        Assertions.assertEquals(2,totalPages);
     }
 }

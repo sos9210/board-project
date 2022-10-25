@@ -2,20 +2,14 @@ package com.example.board.service.impl;
 
 import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
-import com.example.board.domain.QBoard;
-import com.example.board.domain.QMember;
 import com.example.board.dto.BoardDTO;
-import com.example.board.dto.QBoardDTO;
 import com.example.board.repository.AttachFileRepository;
 import com.example.board.repository.BoardRepository;
 import com.example.board.service.BoardService;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +27,6 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
-    private final JPAQueryFactory queryFactory;
 
     @Override
     public Board viewBoard(Long boardSn) {
@@ -60,33 +53,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Page<BoardDTO> listForum(BoardDTO search, Pageable pageable) {
-        QBoard board = QBoard.board;
-        JPAQuery<Long> countQuery = queryFactory
-                .select(board.count())
-                .from(board)
-                .where(
-                        board.subject.eq(search.getSubject()).or(board.content.eq(search.getContent()))
-                );
-
-
-        List<BoardDTO> boardList = queryFactory
-                .select(new QBoardDTO(
-                        board.boardSn,
-                        board.subject,
-                        board.content,
-                        board.member.memberId,
-                        board.registDate
-                ))
-                .from(board)
-                .where(
-                        board.subject.eq(search.getSubject()).or(board.content.eq(search.getContent()))
-                )
-                .orderBy(board.registDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        return PageableExecutionUtils.getPage(boardList, pageable,  countQuery::fetchOne);
+        return boardRepository.findByBoardList(search,pageable);
     }
 
     private List<AttachFile> fileSave(Board board, MultipartHttpServletRequest request) throws IOException {
