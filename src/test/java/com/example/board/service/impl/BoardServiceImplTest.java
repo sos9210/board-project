@@ -41,7 +41,7 @@ class BoardServiceImplTest {
 
     @BeforeEach
     private void getBoardService() {
-       boardService = new BoardServiceImpl(boardRepository,attachFileRepository,jpaQueryFactory);
+       boardService = new BoardServiceImpl(boardRepository,attachFileRepository);
     }
 
     @Test
