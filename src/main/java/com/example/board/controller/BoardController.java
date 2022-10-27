@@ -33,10 +33,15 @@ public class BoardController {
     @GetMapping("/board/user/forums")
     public String boardForums(BoardDTO dto, Pageable pageable, Model model) {
         Page<BoardDTO> boardDTOPage = boardService.listForum(dto, pageable);
-        int totalPages = boardDTOPage.getTotalPages();
+        long totalElements = boardDTOPage.getTotalElements();
+        int startPage = Math.max(1,boardDTOPage.getPageable().getPageNumber() - pageable.getPageSize());
+        int endPage = Math.min(boardDTOPage.getTotalPages(), boardDTOPage.getPageable().getPageNumber() + pageable.getPageSize());
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
         model.addAttribute("pageable",boardDTOPage.getPageable());
+        model.addAttribute("page",boardDTOPage);
         model.addAttribute("boardList",boardDTOPage.getContent());
-        model.addAttribute("totalPages",totalPages);
+        model.addAttribute("totalElements",totalElements);
         return "view/boardForums";
     }
 
