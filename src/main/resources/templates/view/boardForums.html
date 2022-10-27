@@ -24,7 +24,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="list : ${boardList}">
-                            <th scope="row" th:text="${totalPages -((pageable.pageNumber) * pageable.pageSize + listStat.count)}">Default</th>
+                            <th scope="row" th:text="${totalElements -((pageable.pageNumber) * pageable.pageSize + listStat.count -1)}">Default</th>
                             <td th:text="${list.subject}">Column content</td>
                             <td th:text="${list.memberId}">Column content</td>
                             <td th:text="${list.registDate}">Column content</td>
@@ -39,25 +39,13 @@
         <div class="bs-component">
             <div>
                 <ul class="pagination">
-                    <li class="page-item disabled">
+                    <li class="page-item disabled" th:if="${page.hasPrevious}">
                         <a class="page-link" href="#">&laquo;</a>
                     </li>
-                    <li class="page-item active">
-                        <a class="page-link" href="#">1</a>
+                    <li class="page-item" th:each="number:${#numbers.sequence(startPage,endPage)}" th:classappend="${(pageable.pageNumber+1) == number} ? 'active'">
+                        <a class="page-link" href="#" th:text="${number}">1</a>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">4</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">5</a>
-                    </li>
-                    <li class="page-item">
+                    <li class="page-item" th:if="${page.hasNext}">
                         <a class="page-link" href="#">&raquo;</a>
                     </li>
                 </ul>
