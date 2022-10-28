@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -61,7 +62,11 @@ public class BoardServiceImpl implements BoardService {
         List<AttachFile> attachFileList = new ArrayList<>();
 
         while(itr.hasNext()) {
-            MultipartFile multipartFile = request.getFile(itr.next());
+            String nextFile = itr.next();
+            MultipartFile multipartFile = request.getFile(nextFile);
+            if(!StringUtils.hasText(multipartFile.getOriginalFilename())){
+                return attachFileList;
+            }
             String[] originalFilenameAndExt = multipartFile.getOriginalFilename().split("\\.");
             String rootPath = System.getProperty("user.dir");
 

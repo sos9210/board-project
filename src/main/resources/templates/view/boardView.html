@@ -19,7 +19,7 @@
         </div>
         <div class="bs-component mb-3">
             <div class="btn-group" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-secondary">목록</button>
+                <a href="/board/user/forums" class="btn btn-secondary">목록</a>
                 <button type="button" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" class="btn btn-secondary">수정</button>
                 <button type="button" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" class="btn btn-secondary">삭제</button>
             </div>
