@@ -7,14 +7,17 @@ import com.example.board.service.BoardService;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller @Slf4j
@@ -29,6 +34,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final MemberService memberService;
+    private final MessageSource messageSource;
 
     @GetMapping("/board/user/forums")
     public String boardForums(BoardDTO dto, Pageable pageable, Model model) {
@@ -77,5 +83,24 @@ public class BoardController {
         Board board = boardService.viewBoard(boardSn);
         model.addAttribute("view",board);
         return "view/boardView";
+    }
+    @ResponseBody
+    @DeleteMapping("/board/user/forum/{boardSn}")
+    public ResponseEntity<String> boardDelete(HttpServletRequest request,
+                                              @PathVariable("boardSn") Long boardSn, @AuthenticationPrincipal User user) {
+        String memberId = user.getUsername();
+
+        if(user == null) {
+            log.info("사용자 세션 오류입니다");
+            String message = messageSource.getMessage("error.request.common", null, Locale.getDefault());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+        }
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setUpdateDate(LocalDateTime.now());
+        boardDTO.setUpdateIp(request.getRemoteAddr());
+        boardDTO.setMemberId(memberId);
+        String message = messageSource.getMessage("delete.success.common", null, Locale.getDefault());
+        boardService.deleteBoard(boardDTO);
+        return ResponseEntity.ok(message);
     }
 }

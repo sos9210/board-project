@@ -20,9 +20,12 @@ public class BoardDTO {
     private String content;                 //내용
 
     private String memberId;                //작성자ID
+    private String deleteYn;                //삭제여부
 
     private LocalDateTime registDate;       //등록일자
     private String registIp;                //등록IP
+    private LocalDateTime updateDate;       //수정일자
+    private String updateIp;                //수정IP
 
     @QueryProjection
     public BoardDTO(Long boardSn, String subject, String content,String memberId , LocalDateTime registDate) {

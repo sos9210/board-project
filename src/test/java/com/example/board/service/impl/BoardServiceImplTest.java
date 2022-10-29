@@ -3,18 +3,17 @@ package com.example.board.service.impl;
 import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
 import com.example.board.domain.Member;
+import com.example.board.dto.BoardDTO;
 import com.example.board.repository.AttachFileRepository;
 import com.example.board.repository.BoardRepository;
+import com.example.board.repository.MemberRepository;
 import com.example.board.service.BoardService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
@@ -35,13 +34,15 @@ class BoardServiceImplTest {
     @Mock
     AttachFileRepository attachFileRepository;
     @Mock
+    MemberRepository memberRepository;
+    @Mock
     JPAQueryFactory jpaQueryFactory;
 
     BoardService boardService;
 
     @BeforeEach
     private void getBoardService() {
-       boardService = new BoardServiceImpl(boardRepository,attachFileRepository);
+       boardService = new BoardServiceImpl(memberRepository,boardRepository,attachFileRepository);
     }
 
     @Test
@@ -52,7 +53,7 @@ class BoardServiceImplTest {
         given(boardRepository.save(board)).willReturn(board);
         Long boardSn = boardService.writeBoard(board, new MockMultipartHttpServletRequest());
 
-        given(boardRepository.findById(boardSn)).willReturn(Optional.of(board));
+        given(boardRepository.findByBoardSnAndDeleteYn(boardSn,"N")).willReturn(Optional.of(board));
 
         //when
         Board findBoard = boardService.viewBoard(boardSn);
@@ -60,6 +61,30 @@ class BoardServiceImplTest {
         //then
         Assertions.assertEquals("asd123",findBoard.getMember().getMemberId());
         Assertions.assertEquals("안녕하세요.",findBoard.getSubject());
+
+    }
+    @Test
+    void 게시글_삭제() throws IOException {
+        //given
+        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
+
+        given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
+        given(boardRepository.findByBoardSnAndMember(1L,member)).willReturn(Optional.of(board));
+
+        given(boardRepository.findByBoardSnAndDeleteYn(1L,"N")).willThrow(NoSuchElementException.class);
+
+        //when
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardSn(1L);
+        boardDTO.setUpdateDate(LocalDateTime.now());
+        boardDTO.setUpdateIp("127.0.0.1");
+        boardDTO.setMemberId("asd123");
+
+        boardService.deleteBoard(boardDTO);
+
+        //then
+        Assertions.assertThrows(NoSuchElementException.class ,() -> boardService.viewBoard(1L));
 
     }
 

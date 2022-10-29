@@ -12,4 +12,5 @@ public interface BoardService {
     Board viewBoard(Long boardSn);
     Long writeBoard(Board board, MultipartHttpServletRequest request) throws IOException;
     Page<BoardDTO> listForum(BoardDTO search, Pageable pageable);
+    void deleteBoard(BoardDTO boardDTO);
 }
