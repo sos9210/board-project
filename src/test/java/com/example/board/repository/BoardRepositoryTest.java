@@ -60,6 +60,29 @@ class BoardRepositoryTest {
     }
 
     @Test
+    void 게시글_삭제() {
+        //given
+        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
+
+        em.persist(member);
+        em.persist(board);
+
+        //when
+        Board findBoard = boardRepository.findByBoardSnAndMember(board.getBoardSn(),member).orElseGet(Board::new);
+        findBoard.boardDelete();
+
+        em.flush();
+        em.clear();
+
+        //then
+        Board deleteBoard = boardRepository.findByBoardSnAndMember(board.getBoardSn(),member).orElseGet(Board::new);
+
+        Assertions.assertEquals(deleteBoard.getDeleteYn(),"Y");
+
+    }
+
+    @Test
     void 전체목록조회(){
         //given
         queryFactory = new JPAQueryFactory(em);

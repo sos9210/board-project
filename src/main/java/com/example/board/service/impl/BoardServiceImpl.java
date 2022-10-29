@@ -2,14 +2,17 @@ package com.example.board.service.impl;
 
 import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
+import com.example.board.domain.Member;
 import com.example.board.dto.BoardDTO;
 import com.example.board.repository.AttachFileRepository;
 import com.example.board.repository.BoardRepository;
+import com.example.board.repository.MemberRepository;
 import com.example.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -26,14 +29,16 @@ import java.util.*;
 @Transactional @Slf4j
 public class BoardServiceImpl implements BoardService {
 
+    private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
 
     @Override
     public Board viewBoard(Long boardSn) {
-        Board findBoard = boardRepository.findById(boardSn).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
+        Board findBoard = boardRepository.findByBoardSnAndDeleteYn(boardSn,"N").orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
         return findBoard;
     }
+
 
     @Override
     public Long writeBoard(Board board, MultipartHttpServletRequest request) throws IOException {
@@ -55,6 +60,17 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Page<BoardDTO> listForum(BoardDTO search, Pageable pageable) {
         return boardRepository.findByBoardList(search,pageable);
+    }
+
+    @Override
+    public void deleteBoard(BoardDTO boardDTO) {
+        Optional<Member> member = memberRepository.findById(boardDTO.getMemberId());
+        Optional<Board> findBoard = boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member.get());
+        if(findBoard.isEmpty()){
+            throw new NoSuchElementException("해당 게시물을 찾을 수 없습니다.");
+        }
+        Board board = findBoard.get();
+        board.boardDelete();
     }
 
     private List<AttachFile> fileSave(Board board, MultipartHttpServletRequest request) throws IOException {

@@ -33,7 +33,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .from(board)
                 .where(
                         subjectEq(search.getSubject()),
-                        contentEq(search.getContent())
+                        contentEq(search.getContent()),
+                        deleteYnEq("N")
                 );
 
 
@@ -48,7 +49,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .from(board)
                 .where(
                         subjectEq(search.getSubject()),
-                        contentEq(search.getContent())
+                        contentEq(search.getContent()),
+                        deleteYnEq("N")
                 )
                 .orderBy(board.registDate.desc())
                 .offset(pageable.getOffset())
@@ -63,5 +65,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     }
     private Predicate contentEq(String content){
         return StringUtils.hasText(content) ? board.content.eq(content) : null;
+    }
+    private Predicate deleteYnEq(String deleteYn){
+        return board.deleteYn.eq("N");
     }
 }

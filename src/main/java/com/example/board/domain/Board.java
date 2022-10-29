@@ -35,4 +35,7 @@ public class Board {
     private LocalDateTime updateDate;       //수정일자
     private String updateIp;                //수정IP
 
+    public void boardDelete() {
+        this.deleteYn = "Y";
+    }
 }
