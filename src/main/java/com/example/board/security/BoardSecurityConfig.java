@@ -47,8 +47,8 @@ public class BoardSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/board/admin/**").hasRole(MemberAuthLevelEnum.ADMIN.name())
-                .antMatchers("/board/user/forum/write","/board/user/forum/delete",
-                                        "/board/user/forum/edit")
+                .antMatchers("/board/user/forum/write","/board/user/forum/delete/*",
+                                        "/board/user/forum/edit/*")
                 .hasAnyRole(MemberAuthLevelEnum.USER.name(),MemberAuthLevelEnum.ADMIN.name())
                 .anyRequest().permitAll();
         return http.build();

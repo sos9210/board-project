@@ -84,6 +84,13 @@ public class BoardController {
         model.addAttribute("view",board);
         return "view/boardView";
     }
+    @GetMapping("/board/user/forum/edit/{boardSn}")
+    public String boardEditForm(@PathVariable("boardSn") Long boardSn, Model model) {
+        Board board = boardService.viewBoard(boardSn);
+        model.addAttribute("view",board);
+        return "view/boardEditForm";
+    }
+
     @ResponseBody
     @DeleteMapping("/board/user/forum/{boardSn}")
     public ResponseEntity<String> boardDelete(HttpServletRequest request,
@@ -101,6 +108,27 @@ public class BoardController {
         boardDTO.setMemberId(memberId);
         String message = messageSource.getMessage("delete.success.common", null, Locale.getDefault());
         boardService.deleteBoard(boardDTO);
+
+        return ResponseEntity.ok(message);
+    }
+    @ResponseBody
+    @PatchMapping("/board/user/forum/edit/{boardSn}")
+    public ResponseEntity<String> boardUpdate(HttpServletRequest request,@RequestBody BoardDTO boardDTO,
+                                              @PathVariable("boardSn") Long boardSn, @AuthenticationPrincipal User user) {
+        String memberId = user.getUsername();
+
+        if(user == null) {
+            log.info("사용자 세션 오류입니다");
+            String message = messageSource.getMessage("error.request.common", null, Locale.getDefault());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+        }
+        boardDTO.setBoardSn(boardSn);
+        boardDTO.setUpdateDate(LocalDateTime.now());
+        boardDTO.setUpdateIp(request.getRemoteAddr());
+        boardDTO.setMemberId(memberId);
+        String message = messageSource.getMessage("update.success.common", null, Locale.getDefault());
+        boardService.updateBoard(boardDTO);
+
         return ResponseEntity.ok(message);
     }
 }

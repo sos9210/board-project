@@ -1,5 +1,6 @@
 package com.example.board.domain;
 
+import com.example.board.dto.BoardDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,5 +38,12 @@ public class Board {
 
     public void boardDelete() {
         this.deleteYn = "Y";
+    }
+
+    public void boardUpdate(BoardDTO dto) {
+        this.subject = dto.getSubject();
+        this.content = dto.getContent();
+        this.updateDate = LocalDateTime.now();
+        this.updateIp = dto.getUpdateIp();
     }
 }

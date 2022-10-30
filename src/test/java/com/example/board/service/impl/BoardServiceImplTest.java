@@ -64,7 +64,7 @@ class BoardServiceImplTest {
 
     }
     @Test
-    void 게시글_삭제() throws IOException {
+    void 게시글_삭제() {
         //given
         Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
@@ -86,6 +86,31 @@ class BoardServiceImplTest {
         //then
         Assertions.assertThrows(NoSuchElementException.class ,() -> boardService.viewBoard(1L));
 
+    }
+
+    @Test
+    void 게시글_수정() {
+        //given
+        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
+        ReflectionTestUtils.setField(board,"boardSn",1L);
+
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardSn(1L);
+        boardDTO.setSubject("안녕하세요 수정");
+        boardDTO.setContent("새로 가입한 홍길동 입니다 수정");
+        boardDTO.setUpdateDate(LocalDateTime.now());
+        boardDTO.setUpdateIp("127.0.0.1");
+        boardDTO.setMemberId("asd123");
+
+        given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
+        given(boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member)).willReturn(Optional.of(board));
+
+        //when
+        Long boardSn = boardService.updateBoard(boardDTO);
+
+        //then
+        Assertions.assertEquals(1L,boardSn);
     }
 
     @Test
