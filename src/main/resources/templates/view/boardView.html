@@ -20,7 +20,7 @@
         <div class="bs-component mb-3">
             <div class="btn-group" role="group" aria-label="Basic example">
                 <a href="/board/user/forums" class="btn btn-secondary">목록</a>
-                <button type="button" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" class="btn btn-secondary">수정</button>
+                <a type="button" href="#;" th:href="@{/board/user/forum/edit/{boardSn}(boardSn=${view.boardSn})}" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" class="btn btn-secondary">수정</a>
                 <button type="button" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" id="boardDeleteBtn" class="btn btn-secondary">삭제</button>
             </div>
         </div>
@@ -58,8 +58,8 @@
     </div>
 </html>
 <script th:inline="javascript">
-    var btn = document.getElementById("boardDeleteBtn");
-    btn.addEventListener("click", () => {
+    var deleteBtn = document.getElementById("boardDeleteBtn");
+    deleteBtn.addEventListener("click", () => {
         if(confirm("정말 삭제하시겠습니까? ")){
             //XMLHttpRequest 객체 생성
             var xhr = new XMLHttpRequest();

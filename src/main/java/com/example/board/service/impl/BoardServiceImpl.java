@@ -58,11 +58,6 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardDTO> listForum(BoardDTO search, Pageable pageable) {
-        return boardRepository.findByBoardList(search,pageable);
-    }
-
-    @Override
     public void deleteBoard(BoardDTO boardDTO) {
         Optional<Member> member = memberRepository.findById(boardDTO.getMemberId());
         Optional<Board> findBoard = boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member.get());
@@ -71,6 +66,25 @@ public class BoardServiceImpl implements BoardService {
         }
         Board board = findBoard.get();
         board.boardDelete();
+    }
+
+    @Override
+    public Long updateBoard(BoardDTO boardDTO) {
+        Optional<Member> member = memberRepository.findById(boardDTO.getMemberId());
+        Optional<Board> findBoard = boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member.get());
+        if(findBoard.isEmpty()){
+            throw new NoSuchElementException("해당 게시물을 찾을 수 없습니다.");
+        }
+        Board board = findBoard.get();
+        board.boardUpdate(boardDTO);
+
+        return board.getBoardSn();
+    }
+
+
+    @Override
+    public Page<BoardDTO> listForum(BoardDTO search, Pageable pageable) {
+        return boardRepository.findByBoardList(search,pageable);
     }
 
     private List<AttachFile> fileSave(Board board, MultipartHttpServletRequest request) throws IOException {
