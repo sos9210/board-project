@@ -1,10 +1,12 @@
 package com.example.board.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Entity @Getter
 public class AttachFile {
     public AttachFile(String realFileName, String storedFileName, String extension, long sized, String savedPath, Board board, LocalDateTime registDate, String registIp) {

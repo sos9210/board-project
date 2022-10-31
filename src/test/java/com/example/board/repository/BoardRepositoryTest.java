@@ -1,5 +1,6 @@
 package com.example.board.repository;
 
+import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
 import com.example.board.domain.Member;
 import com.example.board.domain.QBoard;
@@ -38,6 +39,8 @@ class BoardRepositoryTest {
     private MemberRepository memberRepository;
     @Autowired
     private EntityManager em;
+    @Autowired
+    private AttachFileRepository attachFileRepository;
 
     private JPAQueryFactory queryFactory;
 
@@ -57,6 +60,26 @@ class BoardRepositoryTest {
         //then
         Assertions.assertEquals(board,findBoard);
         Assertions.assertEquals(board.getBoardSn(),findBoard.getBoardSn());
+    }
+    @Test
+    void 게시글_등록_상세조회_첨부파일조회(){
+        //given
+        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
+        AttachFile attachFile = new AttachFile("realName.docs","123123.docs","docs",12312,"/data/file",board,LocalDateTime.now(),"127.0.0.1");
+
+        em.persist(member);
+        em.persist(board);
+        em.persist(attachFile);
+
+        //when
+        Board findBoard = boardRepository.findById(board.getBoardSn()).orElseGet(Board::new);
+        AttachFile findAttachFile = attachFileRepository.findByBoard(board).orElseGet(AttachFile::new);
+
+        //then
+        Assertions.assertEquals(board,findBoard);
+        Assertions.assertEquals(board.getBoardSn(),findBoard.getBoardSn());
+        Assertions.assertEquals(board.getBoardSn(),findAttachFile.getBoard().getBoardSn());
     }
 
     @Test

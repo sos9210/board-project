@@ -1,5 +1,6 @@
 package com.example.board.dto;
 
+import com.example.board.domain.AttachFile;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,8 @@ public class BoardDTO {
     private String registIp;                //등록IP
     private LocalDateTime updateDate;       //수정일자
     private String updateIp;                //수정IP
+
+    private AttachFile attachFile;
 
     @QueryProjection
     public BoardDTO(Long boardSn, String subject, String content,String memberId , LocalDateTime registDate) {

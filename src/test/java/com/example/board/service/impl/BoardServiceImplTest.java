@@ -56,11 +56,33 @@ class BoardServiceImplTest {
         given(boardRepository.findByBoardSnAndDeleteYn(boardSn,"N")).willReturn(Optional.of(board));
 
         //when
-        Board findBoard = boardService.viewBoard(boardSn);
+        BoardDTO findBoard = boardService.viewBoard(boardSn);
 
         //then
-        Assertions.assertEquals("asd123",findBoard.getMember().getMemberId());
+        Assertions.assertEquals("asd123",findBoard.getMemberId());
         Assertions.assertEquals("안녕하세요.",findBoard.getSubject());
+
+    }
+    @Test
+    void 게시글_상세_첨부파일조회() throws IOException {
+        //given
+        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
+        AttachFile attachFile = new AttachFile("realName.docs","123123.docs","docs",12312,"/data/file",board,LocalDateTime.now(),"127.0.0.1");
+
+
+        given(boardRepository.findByBoardSnAndDeleteYn(1L,"N")).willReturn(Optional.of(board));
+        given(attachFileRepository.findByBoard(board)).willReturn(Optional.of(attachFile));
+        ReflectionTestUtils.setField(board,"boardSn",1L);
+        ReflectionTestUtils.setField(attachFile,"board",board);
+
+        //when
+        BoardDTO findBoard = boardService.viewBoard(1L);
+
+        //then
+        Assertions.assertEquals("asd123",findBoard.getMemberId());
+        Assertions.assertEquals("안녕하세요.",findBoard.getSubject());
+        Assertions.assertEquals(attachFile.getRealFileName(),findBoard.getAttachFile().getRealFileName());
 
     }
     @Test

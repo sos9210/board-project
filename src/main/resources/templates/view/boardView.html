@@ -20,8 +20,8 @@
         <div class="bs-component mb-3">
             <div class="btn-group" role="group" aria-label="Basic example">
                 <a href="/board/user/forums" class="btn btn-secondary">목록</a>
-                <a type="button" href="#;" th:href="@{/board/user/forum/edit/{boardSn}(boardSn=${view.boardSn})}" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" class="btn btn-secondary">수정</a>
-                <button type="button" th:if="${#strings.equals(#authentication.name,view.member.memberId)}" id="boardDeleteBtn" class="btn btn-secondary">삭제</button>
+                <a type="button" href="#;" th:href="@{/board/user/forum/edit/{boardSn}(boardSn=${view.boardSn})}" th:if="${#strings.equals(#authentication.name,view.memberId)}" class="btn btn-secondary">수정</a>
+                <button type="button" th:if="${#strings.equals(#authentication.name,view.memberId)}" id="boardDeleteBtn" class="btn btn-secondary">삭제</button>
             </div>
         </div>
         <div class="form-group col-lg-6">

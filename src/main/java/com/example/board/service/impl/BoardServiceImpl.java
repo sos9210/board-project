@@ -34,9 +34,16 @@ public class BoardServiceImpl implements BoardService {
     private final AttachFileRepository attachFileRepository;
 
     @Override
-    public Board viewBoard(Long boardSn) {
+    public BoardDTO viewBoard(Long boardSn) {
         Board findBoard = boardRepository.findByBoardSnAndDeleteYn(boardSn,"N").orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
-        return findBoard;
+        Optional<AttachFile> attachFile = attachFileRepository.findByBoard(findBoard);
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardSn(findBoard.getBoardSn());
+        boardDTO.setSubject(findBoard.getSubject());
+        boardDTO.setContent(findBoard.getContent());
+        boardDTO.setMemberId(findBoard.getMember().getMemberId());
+        boardDTO.setAttachFile(attachFile.isEmpty() ? null : attachFile.get());
+        return boardDTO;
     }
 
 
@@ -101,8 +108,8 @@ public class BoardServiceImpl implements BoardService {
             String rootPath = System.getProperty("user.dir");
 
             long fileSize = multipartFile.getSize();                                    //파일사이즈
-            String originalFileName = originalFilenameAndExt[0];                        //실제파일명
             String extension = originalFilenameAndExt[1];                               //확장자
+            String originalFileName = originalFilenameAndExt[0]+"."+extension;          //실제파일명
             String storedFileName = String.valueOf(UUID.randomUUID())+"."+extension;    //저장파일명
             String uploadPath = rootPath+"/upload/"+board.getBoardSn()+"/";             //업로드경로
             File file = new File(uploadPath);
