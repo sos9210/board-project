@@ -35,7 +35,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="formFile" class="form-label mt-4">첨부파일</label>
-                                <input class="form-control" type="file" id="formFile" name="formFile">
+                                <button type="button" class="btn btn-success" id="fileSelect">파일선택</button>
+                                <div class="form-control" id="fileNameText">첨부파일을 선택해주세요</div>
+                                <input class="form-control" type="file" id="formFile" name="formFile" style="display:none;">
                             </div>
                           <button type="submit" class="btn btn-primary mt-4">등록</button>
                         </fieldset>
@@ -46,3 +48,13 @@
         </div>
     </div>
 </html>
+<script>
+document.getElementById('formFile').addEventListener("change", function() {
+    document.getElementById('fileNameText').innerText = document.getElementById('formFile').files[0].name;
+});
+document.getElementById('fileSelect').addEventListener("click", function() {
+    document.getElementById('fileNameText').innerText = '첨부파일을 선택해주세요';
+    document.getElementById('formFile').click();
+});
+
+</script>

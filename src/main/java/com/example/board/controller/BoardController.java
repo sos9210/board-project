@@ -80,13 +80,13 @@ public class BoardController {
 
     @GetMapping("/board/user/forum/{boardSn}")
     public String boardView(@PathVariable("boardSn") Long boardSn, Model model) {
-        Board board = boardService.viewBoard(boardSn);
+        BoardDTO board = boardService.viewBoard(boardSn);
         model.addAttribute("view",board);
         return "view/boardView";
     }
     @GetMapping("/board/user/forum/edit/{boardSn}")
     public String boardEditForm(@PathVariable("boardSn") Long boardSn, Model model) {
-        Board board = boardService.viewBoard(boardSn);
+        BoardDTO board = boardService.viewBoard(boardSn);
         model.addAttribute("view",board);
         return "view/boardEditForm";
     }

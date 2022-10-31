@@ -35,7 +35,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="formFile" class="form-label mt-4">첨부파일</label>
-                                <input class="form-control" type="file" id="formFile" name="formFile">
+                                <button type="button" class="btn btn-success" id="fileSelect">파일선택</button>
+                                <div class="form-control" id="fileNameText" th:text="${view.attachFile.realFileName}">첨부파일을 선택해주세요</div>
+                                <input class="form-control" type="file" id="formFile" name="formFile" style="display:none;">
                             </div>
                           <button type="button" id="editBtn" class="btn btn-primary mt-4">수정</button>
                         </fieldset>
@@ -47,6 +49,14 @@
     </div>
 </html>
 <script th:inline="javascript">
+document.getElementById('formFile').onchange = function() {
+    document.getElementById('fileNameText').text(document.getElementById('formFile')[0].files[0].name);
+}
+document.getElementById('fileSelect').onclick = function() {
+    document.getElementById('fileNameText').text('첨부파일을 선택해주세요');
+    document.getElementById('formFile').click();
+}
+
     var editBtn = document.getElementById("editBtn");
     editBtn.addEventListener("click", () => {
         var params = {
