@@ -176,4 +176,8 @@ class BoardServiceImplTest {
         Assertions.assertEquals(fileSaves.get(0).getBoard().getBoardSn(), board.getBoardSn());
         Assertions.assertEquals(fileSaves.get(0).getRealFileName(), "test");
     }
+    @Test
+    void 게시글_첨부파일_다운로드() {
+
+    }
 }

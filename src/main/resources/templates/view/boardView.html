@@ -16,6 +16,10 @@
         <div class="col-lg-4">
             <div class="bs-component" th:text="${view.content}">
             </div>
+            <div class="input-group mb-3" th:if="${view.attachFile != null}">
+                <div class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="downButton" th:text="${view.attachFile.realFileName}"></div>
+                <a href="./download" th:href="@{/board/user/forum/download(attachFileSn=${view.attachFile.attachFileSn},boardSn=${view.boardSn})}" class="btn btn-primary" type="button" id="downButton">다운로드</a>
+            </div>
         </div>
         <div class="bs-component mb-3">
             <div class="btn-group" role="group" aria-label="Basic example">
@@ -26,8 +30,8 @@
         </div>
         <div class="form-group col-lg-6">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="댓글내용을 입력하세요" aria-label="Recipient's username" aria-describedby="button-addon2">
-                <button class="btn btn-primary" type="button" id="button-addon2">댓글등록</button>
+                <input type="text" class="form-control" placeholder="댓글내용을 입력하세요" aria-label="Recipient's username" aria-describedby="button-addon1">
+                <button class="btn btn-primary" type="button" id="button-addon1">댓글등록</button>
             </div>
         </div>
     </div>
