@@ -124,4 +124,9 @@ public class BoardServiceImpl implements BoardService {
         return attachFileList;
     }
 
+    @Override
+    public AttachFile findAttachFile(Long attachFileSn) {
+        AttachFile findFile = attachFileRepository.findById(attachFileSn).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 파일정보 입니다."));
+        return findFile;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
 import com.example.board.domain.Member;
 import com.example.board.dto.BoardDTO;
@@ -7,6 +8,7 @@ import com.example.board.service.BoardService;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
+import java.io.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -130,5 +133,37 @@ public class BoardController {
         boardService.updateBoard(boardDTO);
 
         return ResponseEntity.ok(message);
+    }
+
+    @GetMapping("/board/user/forum/download")
+    public void attachFileDownload( HttpServletResponse response,
+                                    @RequestParam("attachFileSn") Long attachFileSn) {
+
+        AttachFile attachFile = boardService.findAttachFile(attachFileSn);
+
+        String fileDownNm = attachFile.getSavedPath() + "/" + attachFile.getStoredFileName().trim();
+        File file = new File(fileDownNm);
+
+        if(!file.exists()){
+            throw new IllegalStateException("파일이 존재하지 않습니다.");
+        }
+
+        try(BufferedInputStream fin = new BufferedInputStream(new FileInputStream(file));
+                BufferedOutputStream outs = new BufferedOutputStream(response.getOutputStream());){
+
+        String realFileName = new String(attachFile.getRealFileName().getBytes("UTF-8"), "8859_1");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=\""+(realFileName)+"\";");
+        response.setHeader("Content-Transfer-Encoding", "binary");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        response.setContentLength((int)file.length());
+
+            IOUtils.copy(fin,outs);
+            response.flushBuffer();
+        }catch (IOException e) {
+            log.info("파일다운로드에 실패했습니다.",e);
+        }
     }
 }

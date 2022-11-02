@@ -1,5 +1,6 @@
 package com.example.board.service;
 
+import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
 import com.example.board.dto.BoardDTO;
 import org.springframework.data.domain.Page;
@@ -14,4 +15,5 @@ public interface BoardService {
     Page<BoardDTO> listForum(BoardDTO search, Pageable pageable);
     void deleteBoard(BoardDTO boardDTO);
     Long updateBoard(BoardDTO boardDTO);
+    AttachFile findAttachFile(Long attachFileSn) ;
 }
