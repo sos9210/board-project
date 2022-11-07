@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -129,10 +130,45 @@ class BoardServiceImplTest {
         given(boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member)).willReturn(Optional.of(board));
 
         //when
-        Long boardSn = boardService.updateBoard(boardDTO);
+        Long boardSn = boardService.updateBoard(boardDTO, new MockMultipartHttpServletRequest());
 
         //then
         Assertions.assertEquals(1L,boardSn);
+    }
+
+    @Test
+    void 게시글_첨부파일_수정() throws IOException {
+        //given
+        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
+        ReflectionTestUtils.setField(board,"boardSn",1L);
+
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardSn(1L);
+        boardDTO.setSubject("안녕하세요 수정");
+        boardDTO.setContent("새로 가입한 홍길동 입니다 수정");
+        boardDTO.setUpdateDate(LocalDateTime.now());
+        boardDTO.setUpdateIp("127.0.0.1");
+        boardDTO.setMemberId("asd123");
+
+        MockMultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
+
+        FileInputStream fileInputStream = new FileInputStream(System.getProperty("user.dir")+"/upload/test/test.txt");
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain",fileInputStream );
+
+        request.addFile(multipartFile);
+
+        given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
+        given(boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member)).willReturn(Optional.of(board));
+
+        //when
+        List<AttachFile> fileSaves = ReflectionTestUtils.invokeMethod(boardService, "fileSave", board, request);
+        Long boardSn = boardService.updateBoard(boardDTO,request);
+
+        //then
+        Assertions.assertEquals(1L,boardSn);
+        Assertions.assertEquals(fileSaves.get(0).getBoard().getBoardSn(), board.getBoardSn());
+        Assertions.assertEquals(fileSaves.get(0).getRealFileName(), "test.txt");
     }
 
     @Test
@@ -160,9 +196,6 @@ class BoardServiceImplTest {
         FileInputStream fileInputStream = new FileInputStream(System.getProperty("user.dir")+"/upload/test/test.txt");
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain",fileInputStream );
 
-        String[] originalFilenameAndExt = multipartFile.getOriginalFilename().split("\\.");
-        String rootPath = System.getProperty("user.dir");
-
         request.addFile(multipartFile);
 
         given(boardRepository.save(board)).willReturn(board);
@@ -174,10 +207,7 @@ class BoardServiceImplTest {
         //then
         Assertions.assertEquals(board.getBoardSn(),boardId);
         Assertions.assertEquals(fileSaves.get(0).getBoard().getBoardSn(), board.getBoardSn());
-        Assertions.assertEquals(fileSaves.get(0).getRealFileName(), "test");
+        Assertions.assertEquals(fileSaves.get(0).getRealFileName(), "test.txt");
     }
-    @Test
-    void 게시글_첨부파일_다운로드() {
 
-    }
 }

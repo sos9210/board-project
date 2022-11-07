@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface AttachFileRepository extends JpaRepository<AttachFile,Long> {
     Optional<AttachFile> findByBoard(Board board);
+    void deleteByBoard(Board board);
 }

@@ -114,25 +114,28 @@ public class BoardController {
 
         return ResponseEntity.ok(message);
     }
-    @ResponseBody
-    @PatchMapping("/board/user/forum/edit/{boardSn}")
-    public ResponseEntity<String> boardUpdate(HttpServletRequest request,@RequestBody BoardDTO boardDTO,
-                                              @PathVariable("boardSn") Long boardSn, @AuthenticationPrincipal User user) {
-        String memberId = user.getUsername();
 
-        if(user == null) {
+    @PostMapping("/board/user/forum/edit/{boardSn}")
+    public String boardUpdate(@Valid BoardDTO boardDTO, Errors errors, MultipartHttpServletRequest request,
+                              @PathVariable("boardSn") Long boardSn, Principal principal, Model model) {
+        if(errors.hasErrors()){
+            model.addAttribute("view",boardDTO);
+            return "view/boardEditForm";
+        }
+
+        String memberId = principal.getName();
+
+        if(memberId == null) {
             log.info("사용자 세션 오류입니다");
-            String message = messageSource.getMessage("error.request.common", null, Locale.getDefault());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+            return "redirect:/board/user/login";
         }
         boardDTO.setBoardSn(boardSn);
         boardDTO.setUpdateDate(LocalDateTime.now());
         boardDTO.setUpdateIp(request.getRemoteAddr());
         boardDTO.setMemberId(memberId);
-        String message = messageSource.getMessage("update.success.common", null, Locale.getDefault());
-        boardService.updateBoard(boardDTO);
+        boardService.updateBoard(boardDTO,request);
 
-        return ResponseEntity.ok(message);
+        return "redirect:/board/user/forum/"+boardSn;
     }
 
     @GetMapping("/board/user/forum/download")
