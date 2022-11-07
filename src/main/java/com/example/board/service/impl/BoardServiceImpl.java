@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -76,16 +75,27 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Long updateBoard(BoardDTO boardDTO) {
+    public Long updateBoard(BoardDTO boardDTO, MultipartHttpServletRequest request) {
         Optional<Member> member = memberRepository.findById(boardDTO.getMemberId());
-        Optional<Board> findBoard = boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member.get());
-        if(findBoard.isEmpty()){
-            throw new NoSuchElementException("해당 게시물을 찾을 수 없습니다.");
-        }
-        Board board = findBoard.get();
-        board.boardUpdate(boardDTO);
+        Board findBoard = boardRepository.findByBoardSnAndMember(boardDTO.getBoardSn(),member.get())
+                .orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
 
-        return board.getBoardSn();
+
+        try{
+            List<AttachFile> attachFiles = fileSave(findBoard, request);
+            if(attachFiles.size() > 0){
+                //수정시 등록된 파일이 존재하면 기존 파일을 삭제하고 새로 등록한다.
+                attachFileRepository.deleteByBoard(findBoard);
+                for (AttachFile files  :  attachFiles) {
+                    attachFileRepository.save(files);
+                }
+            }
+        }catch (IOException e){
+            log.error("fileUploadFail :: ",e);
+        }
+        findBoard.boardUpdate(boardDTO);
+
+        return findBoard.getBoardSn();
     }
 
 

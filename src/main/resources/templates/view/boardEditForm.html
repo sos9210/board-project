@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="bs-component">
-                    <form name="editForm">
+                    <form name="editForm" id="editForm" method="POST" enctype="multipart/form-data">
                         <fieldset>
                             <div class="form-group row">
                                 <label for="staticEmail" class="col-sm-2 col-form-label">아이디</label>
@@ -27,19 +27,19 @@
                             </div>
                             <div class="form-group">
                                 <label for="subject" class="form-label mt-4">제목</label>
-                                <input type="text" class="form-control" id="subject" name="subject" th:value="${view.subject}" aria-describedby="emailHelp">
+                                <input type="text" class="form-control" id="subject" name="subject" th:value="${view?.subject}" aria-describedby="emailHelp">
                             </div>
                             <div class="form-group">
                                 <label for="content" class="form-label mt-4">내용</label>
-                                <textarea class="form-control" id="content" name="content" th:text="${view.content}" rows="12"></textarea>
+                                <textarea class="form-control" id="content" name="content" th:text="${view?.content}" rows="12"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="formFile" class="form-label mt-4">첨부파일</label>
+                                <label for="fileForm" class="form-label mt-4">첨부파일</label>
                                 <button type="button" class="btn btn-success" id="fileSelect">파일선택</button>
-                                <div class="form-control" id="fileNameText" th:text="${view.attachFile.realFileName}">첨부파일을 선택해주세요</div>
-                                <input class="form-control" type="file" id="formFile" name="formFile" style="display:none;">
+                                <div class="form-control" id="fileNameText" th:text="${view.attachFile?.realFileName}">첨부파일을 선택해주세요</div>
+                                <input class="form-control" type="file" id="fileForm" name="fileForm" style="display:none;">
                             </div>
-                          <button type="button" id="editBtn" class="btn btn-primary mt-4">수정</button>
+                          <button type="submit" id="editBtn" class="btn btn-primary mt-4">수정</button>
                         </fieldset>
                     </form>
                 </div>
@@ -49,40 +49,11 @@
     </div>
 </html>
 <script th:inline="javascript">
-document.getElementById('formFile').onchange = function() {
-    document.getElementById('fileNameText').text(document.getElementById('formFile')[0].files[0].name);
-}
-document.getElementById('fileSelect').onclick = function() {
-    document.getElementById('fileNameText').text('첨부파일을 선택해주세요');
-    document.getElementById('formFile').click();
-}
-
-    var editBtn = document.getElementById("editBtn");
-    editBtn.addEventListener("click", () => {
-        var params = {
-            subject : document.getElementById("subject").value,
-            content : document.getElementById("content").value
-        };
-
-        //XMLHttpRequest 객체 생성
-        var xhr = new XMLHttpRequest();
-
-        //요청을 보낼 방식, url, 비동기여부 설정
-        xhr.open('PATCH', '/board/user/forum/edit/[[${view.boardSn}]]', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-
-        //요청 전송
-        xhr.send(JSON.stringify(params));
-
-        //Callback
-        xhr.onload = () => {
-            if (xhr.status == 200) {
-                //success
-                alert(xhr.response);
-                location.href = "/board/user/forum/[[${view.boardSn}]]";
-            } else {
-                alert(xhr.response);
-            }
-        }
-    });
+document.getElementById('fileForm').addEventListener("change", function() {
+    document.getElementById('fileNameText').innerText = document.getElementById('fileForm').files[0].name;
+});
+document.getElementById('fileSelect').addEventListener("click", function() {
+    document.getElementById('fileNameText').innerText = '첨부파일을 선택해주세요';
+    document.getElementById('fileForm').click();
+});
 </script>
