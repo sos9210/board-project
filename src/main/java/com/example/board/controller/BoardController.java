@@ -88,7 +88,11 @@ public class BoardController {
         return "view/boardView";
     }
     @GetMapping("/board/user/forum/edit/{boardSn}")
-    public String boardEditForm(@PathVariable("boardSn") Long boardSn, Model model) {
+    public String boardEditForm(@PathVariable("boardSn") Long boardSn, Model model, @AuthenticationPrincipal User user) {
+        if(user == null) {
+            log.info("사용자 세션 오류입니다");
+            return "redirect:/board/user/login";
+        }
         BoardDTO board = boardService.viewBoard(boardSn);
         model.addAttribute("view",board);
         return "view/boardEditForm";
@@ -106,6 +110,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
         }
         BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardSn(boardSn);
         boardDTO.setUpdateDate(LocalDateTime.now());
         boardDTO.setUpdateIp(request.getRemoteAddr());
         boardDTO.setMemberId(memberId);

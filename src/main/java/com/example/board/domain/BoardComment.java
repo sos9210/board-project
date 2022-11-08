@@ -1,12 +1,22 @@
 package com.example.board.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Entity @Getter
 public class BoardComment {
+    public BoardComment(String content, Member member, Board board, String deleteYn, LocalDateTime registDate, String registIp) {
+        this.content = content;
+        this.member = member;
+        this.board = board;
+        this.deleteYn = deleteYn;
+        this.registDate = registDate;
+        this.registIp = registIp;
+    }
 
     @GeneratedValue @Id
     private Long boardCommentSn;
