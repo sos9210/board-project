@@ -29,6 +29,9 @@
                             <td th:text="${list.memberId}">Column content</td>
                             <td th:text="${list.registDate}">Column content</td>
                         </tr>
+                        <tr th:if="${boardList.size == 0}">
+                            <td colspan="4">등록된 게시물이 없습니다</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div><!-- /example -->
@@ -39,7 +42,7 @@
     <div class="col-lg-12 offset-lg-5">
         <div class="bs-component">
             <div>
-                <ul class="pagination">
+                <ul class="pagination" th:if="${boardList.size > 0}">
                     <li class="page-item" th:if="${page.hasPrevious}">
                         <a class="page-link" href="#" th:href="@{/board/user/forums(page=1)}" >&laquo;</a>
                     </li>
