@@ -2,6 +2,7 @@ package com.example.board.controller;
 
 import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
+import com.example.board.domain.BoardComment;
 import com.example.board.domain.Member;
 import com.example.board.dto.BoardDTO;
 import com.example.board.service.BoardService;
@@ -85,6 +86,7 @@ public class BoardController {
     public String boardView(@PathVariable("boardSn") Long boardSn, Model model) {
         BoardDTO board = boardService.viewBoard(boardSn);
         model.addAttribute("view",board);
+        model.addAttribute("comment",new BoardComment());
         return "view/boardView";
     }
     @GetMapping("/board/user/forum/edit/{boardSn}")
