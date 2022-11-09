@@ -28,11 +28,12 @@
                 <button type="button" th:if="${#strings.equals(#authentication.name,view.memberId)}" id="boardDeleteBtn" class="btn btn-secondary">삭제</button>
             </div>
         </div>
-        <form name="commentForm" th:action="@{/board/user/forum/comment/{boardSn}(boardSn=${view.boardSn})}" method="POST">
+        <form name="commentForm" th:object="${comment}" th:action="@{/board/user/forum/comment/{boardSn}(boardSn=${view.boardSn})}" method="POST">
         <div class="form-group col-lg-6">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="댓글내용을 입력하세요" aria-label="Recipient's username" aria-describedby="button-addon1">
-                <button class="btn btn-primary" type="button" id="button-addon1">댓글등록</button>
+                <input type="text" class="form-control" th:field="*{content}" placeholder="댓글내용을 입력하세요" aria-label="Recipient's username" aria-describedby="button-addon1">
+                <div class="invalid-feedback" th:each="err : ${#fields.globalErrors()}" th:text="${err}">반드시 입력하셔야하는 항목입니다.</div>
+                <button class="btn btn-primary" type="submit" id="button-addon1">댓글등록</button>
             </div>
         </div>
         </form>
@@ -64,6 +65,9 @@
     </div>
 </html>
 <script th:inline="javascript">
+if([[${message}]] != null){
+    alert('[[${message}]]');
+}
     var deleteBtn = document.getElementById("boardDeleteBtn");
     deleteBtn.addEventListener("click", () => {
         if(confirm("정말 삭제하시겠습니까? ")){
