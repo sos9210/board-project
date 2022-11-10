@@ -1,6 +1,7 @@
 package com.example.board.controller;
 
 import com.example.board.domain.BoardComment;
+import com.example.board.dto.BoardCommentDTO;
 import com.example.board.dto.BoardDTO;
 import com.example.board.service.BoardService;
 import com.example.board.service.CommentService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 @Slf4j
@@ -32,20 +34,21 @@ public class CommentController {
     private final MessageSource messageSource;
 
     @PostMapping("/board/user/forum/comment/{boardSn}")
-    public String commentWrite(BoardComment comment, BindingResult bindingResult, RedirectAttributes rttr,
+    public String commentWrite(BoardCommentDTO comment, Errors errors, RedirectAttributes rttr, HttpServletRequest request,
                                @PathVariable("boardSn") Long boardSn, Model model , @AuthenticationPrincipal User user){
         if(user == null) {
             log.info("사용자 세션 오류입니다");
             return "redirect:/board/user/login";
         }
-        if(!StringUtils.hasText(comment.getContent())){
+        if(errors.hasErrors()){
             BoardDTO boardDTO = boardService.viewBoard(boardSn);
             model.addAttribute("view",boardDTO);
             model.addAttribute("comment",new BoardComment());
-            bindingResult.addError(new FieldError("comment","content",messageSource.getMessage("error.required.input", null, Locale.getDefault())));
             return "view/boardView";
         }
-
+        comment.setMemberId(user.getUsername());
+        comment.setBoardSn(boardSn);
+        comment.setRegistIp(request.getRemoteAddr());
         Long savedId = commentService.writeComment(comment);
 
         if(savedId == null || savedId == 0){
