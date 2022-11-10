@@ -1,7 +1,7 @@
 package com.example.board.service;
 
-import com.example.board.domain.BoardComment;
+import com.example.board.dto.BoardCommentDTO;
 
 public interface CommentService {
-    Long writeComment(BoardComment boardComment);
+    Long writeComment(BoardCommentDTO boardComment);
 }
