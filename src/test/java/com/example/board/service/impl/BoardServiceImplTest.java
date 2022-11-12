@@ -6,6 +6,7 @@ import com.example.board.domain.Member;
 import com.example.board.dto.BoardDTO;
 import com.example.board.repository.AttachFileRepository;
 import com.example.board.repository.BoardRepository;
+import com.example.board.repository.CommentRepository;
 import com.example.board.repository.MemberRepository;
 import com.example.board.service.BoardService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -36,8 +37,6 @@ class BoardServiceImplTest {
     AttachFileRepository attachFileRepository;
     @Mock
     MemberRepository memberRepository;
-    @Mock
-    JPAQueryFactory jpaQueryFactory;
 
     BoardService boardService;
 

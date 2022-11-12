@@ -65,4 +65,10 @@ class CommentServiceImplTest {
         //then
         Assertions.assertEquals(savedId,1L);
     }
+
+    @Test
+    void 코멘트_목록조회() {
+
+    }
+
 }

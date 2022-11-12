@@ -1,17 +1,24 @@
 package com.example.board.repository;
 
-import com.example.board.domain.Board;
-import com.example.board.domain.BoardComment;
-import com.example.board.domain.Member;
+import com.example.board.domain.*;
+import com.example.board.dto.BoardCommentDTO;
+import com.example.board.dto.BoardDTO;
+import com.example.board.dto.QBoardCommentDTO;
+import com.example.board.dto.QBoardDTO;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -21,7 +28,6 @@ public class CommentRepositoryTest {
     EntityManager em;
     @Autowired
     CommentRepository commentRepository;
-
     @Test
     void 코멘트_등록() {
         //given
@@ -41,5 +47,32 @@ public class CommentRepositoryTest {
         //then
         Assertions.assertEquals(savedComment.getBoard().getBoardSn(),board.getBoardSn());
         Assertions.assertEquals(savedComment.getMember().getMemberId(),member.getMemberId());
+    }
+
+    @Test
+    void 게시물_코멘트목록조회(){
+        //given
+        Pageable pageable = PageRequest.of(0,10);
+
+        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        em.persist(member);
+        Board board = new Board("title","content",member,"N",LocalDateTime.now(),"127.0.0.1");
+        em.persist(board);
+        for (int i = 0; i < 20; i++) {
+            BoardComment comment = new BoardComment("title"+i,member,board,"N",LocalDateTime.now(),"127.0.0.1");
+            em.persist(comment);
+        }
+        em.flush();
+        em.clear();
+
+        //when
+        BoardCommentDTO commentDTO = new BoardCommentDTO();
+        commentDTO.setBoardSn(board.getBoardSn());
+        Page<BoardCommentDTO> byCommentList = commentRepository.findByCommentList(commentDTO, pageable);
+
+
+        //then
+        Assertions.assertEquals(20L,byCommentList.getTotalElements());
+        Assertions.assertEquals(10,byCommentList.getContent().size());
     }
 }

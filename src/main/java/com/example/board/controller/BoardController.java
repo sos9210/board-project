@@ -4,8 +4,10 @@ import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
 import com.example.board.domain.BoardComment;
 import com.example.board.domain.Member;
+import com.example.board.dto.BoardCommentDTO;
 import com.example.board.dto.BoardDTO;
 import com.example.board.service.BoardService;
+import com.example.board.service.CommentService;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,8 @@ public class BoardController {
     private final BoardService boardService;
     private final MemberService memberService;
     private final MessageSource messageSource;
+    private final CommentService commentService;
+
 
     @GetMapping("/board/user/forums")
     public String boardForums(BoardDTO dto, Pageable pageable, Model model) {
@@ -83,10 +87,25 @@ public class BoardController {
     }
 
     @GetMapping("/board/user/forum/{boardSn}")
-    public String boardView(@PathVariable("boardSn") Long boardSn, Model model) {
+    public String boardView(@PathVariable("boardSn") Long boardSn, Pageable pageable, Model model) {
         BoardDTO board = boardService.viewBoard(boardSn);
         model.addAttribute("view",board);
         model.addAttribute("comment",new BoardComment());
+
+        BoardCommentDTO commentDTO = new BoardCommentDTO();
+        commentDTO.setBoardSn(boardSn);
+        Page<BoardCommentDTO> commentDTOPage = commentService.commentList(commentDTO, pageable);
+
+        long totalElements = commentDTOPage.getTotalElements();
+        int startPage = Math.max(1,commentDTOPage.getPageable().getPageNumber() - pageable.getPageSize());
+        int endPage = Math.min(commentDTOPage.getTotalPages(), commentDTOPage.getPageable().getPageNumber() + pageable.getPageSize());
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
+        model.addAttribute("pageable",commentDTOPage.getPageable());
+        model.addAttribute("page",commentDTOPage);
+        model.addAttribute("commentList",commentDTOPage.getContent());
+        model.addAttribute("totalElements",totalElements);
+
         return "view/boardView";
     }
     @GetMapping("/board/user/forum/edit/{boardSn}")
