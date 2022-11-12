@@ -3,9 +3,11 @@ package com.example.board.service.impl;
 import com.example.board.domain.AttachFile;
 import com.example.board.domain.Board;
 import com.example.board.domain.Member;
+import com.example.board.dto.BoardCommentDTO;
 import com.example.board.dto.BoardDTO;
 import com.example.board.repository.AttachFileRepository;
 import com.example.board.repository.BoardRepository;
+import com.example.board.repository.CommentRepository;
 import com.example.board.repository.MemberRepository;
 import com.example.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,6 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final AttachFileRepository attachFileRepository;
-
     @Override
     public BoardDTO viewBoard(Long boardSn) {
         Board findBoard = boardRepository.findByBoardSnAndDeleteYn(boardSn,"N").orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
@@ -42,6 +43,7 @@ public class BoardServiceImpl implements BoardService {
         boardDTO.setContent(findBoard.getContent());
         boardDTO.setMemberId(findBoard.getMember().getMemberId());
         boardDTO.setAttachFile(attachFile.isEmpty() ? null : attachFile.get());
+
         return boardDTO;
     }
 

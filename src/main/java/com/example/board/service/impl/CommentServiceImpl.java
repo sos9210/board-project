@@ -9,6 +9,8 @@ import com.example.board.repository.CommentRepository;
 import com.example.board.repository.MemberRepository;
 import com.example.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -31,4 +33,10 @@ public class CommentServiceImpl implements CommentService {
 
         return commentRepository.save(comment).getBoardCommentSn();
     }
+
+    @Override
+    public Page<BoardCommentDTO> commentList(BoardCommentDTO commentDTO, Pageable pageable) {
+        return commentRepository.findByCommentList(commentDTO,pageable);
+    }
+
 }

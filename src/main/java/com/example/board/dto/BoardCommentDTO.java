@@ -1,14 +1,25 @@
 package com.example.board.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Getter @Setter
 public class BoardCommentDTO {
+    @QueryProjection
+    public BoardCommentDTO(String memberId, Long boardSn, String content, String deleteYn, LocalDateTime registDate) {
+        this.memberId = memberId;
+        BoardSn = boardSn;
+        this.content = content;
+        this.deleteYn = deleteYn;
+        this.registDate = registDate;
+    }
 
     private Long boardCommentSn;
 

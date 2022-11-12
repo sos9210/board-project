@@ -30,6 +30,7 @@ public class BoardDTO {
 
     private AttachFile attachFile;
 
+
     @QueryProjection
     public BoardDTO(Long boardSn, String subject, String content,String memberId , LocalDateTime registDate) {
         this.boardSn = boardSn;
