@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
@@ -67,8 +68,40 @@ class CommentServiceImplTest {
     }
 
     @Test
-    void 코멘트_목록조회() {
+    void 코멘트_수정() {
+        //given
+        BoardCommentDTO dto = new BoardCommentDTO();
+        dto.setBoardSn(33L);
+        dto.setBoardCommentSn(1L);
+        dto.setUpdateIp("127.0.0.1");
+        dto.setContent("이건 댓글입니다.");
 
+        BoardComment boardComment = new BoardComment(dto.getContent(),new Member(),new Board(),"N",LocalDateTime.now(),dto.getRegistIp());
+        ReflectionTestUtils.setField(boardComment,"boardCommentSn",1L);
+
+        given(commentRepository.findByBoardCommentSnAndBoardBoardSn(dto.getBoardCommentSn(),dto.getBoardSn())).willReturn(Optional.of(boardComment));
+
+        //when
+        Long updateId = commentService.editComment(dto);
+
+        //then
+        Assertions.assertEquals(updateId,1L);
+    }
+    @Test
+    void 코멘트_삭제() {
+        //given
+        BoardCommentDTO dto = new BoardCommentDTO();
+        dto.setDeleteYn("Y");
+        dto.setUpdateIp("127.0.0.1");
+
+        BoardComment boardComment = new BoardComment("댓글123123",new Member(),new Board(),"Y",LocalDateTime.now(),"127.0.0.1");
+        ReflectionTestUtils.setField(boardComment,"boardCommentSn",1L);
+
+        given(commentRepository.findByBoardCommentSnAndBoardBoardSn(dto.getBoardCommentSn(),dto.getBoardSn())).willReturn(Optional.of(boardComment));
+
+        //when
+        //then
+        Assertions.assertDoesNotThrow(() -> commentService.deleteComment(dto));
     }
 
 }

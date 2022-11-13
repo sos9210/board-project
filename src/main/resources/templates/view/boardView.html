@@ -49,17 +49,20 @@
                     <table class="table table-hover">
                         <tbody>
                         <tr th:each="comment : ${commentList}" class="table-active">
-                            <td th:text="${comment.content}"></td>
+                            <td th:id="${commentStat.count}" th:text="${comment.content}"></td>
                             <td th:text="${comment.memberId}"></td>
                             <td>[[${comment.registDate}]]
-                                <button th:if="${#strings.equals(#authentication.name,comment.memberId)}" class="badge bg-primary">수정</button>
-                                <button th:if="${#strings.equals(#authentication.name,comment.memberId)}" class="badge bg-danger">삭제</button>
+                                <button th:if="${#strings.equals(#authentication.name,comment.memberId)}" th:attr="data-comment-content=${commentStat.count},data-comment-sn=${comment.boardCommentSn}" class="badge bg-primary comment-edit-button">수정</button>
+                                <button th:if="${#strings.equals(#authentication.name,comment.memberId)}" th:data-comment-sn="${comment.boardCommentSn}" class="badge bg-danger comment-delete-button">삭제</button>
                             </td>
-                            <div class="input-group mb-3" style="display:none;">
-                                <input type="text" class="form-control" placeholder="수정내용을 입력하세요" aria-label="Recipient's username" aria-describedby="button-addon2">
-                                <button class="btn btn-primary" type="button" id="button-addon2">댓글수정</button>
-                            </div>
                         </tr>
+                            <form name="editCommentForm" id="editCommentForm" method="POST">
+                            <div class="input-group mb-3" id="commentEdit" style="display:none;">
+                                <input type="hidden" id="boardCommentSn" name="boardCommentSn">
+                                <input type="text" class="form-control" id="editContent" name="content" placeholder="수정내용을 입력하세요" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                <button class="btn btn-primary" type="button" id="editContentBtn">댓글수정</button>
+                            </div>
+                            </form>
                         </tbody>
                     </table>
                     <div>
@@ -90,8 +93,28 @@
 if([[${message}]] != null){
     alert('[[${message}]]');
 }
-    var deleteBtn = document.getElementById("boardDeleteBtn");
-    deleteBtn.addEventListener("click", () => {
+
+var commentEditLayer = document.getElementById("commentEdit");
+var commentEditContentField = document.getElementById("editContent");
+var commentEditSnField = document.getElementById("boardCommentSn");
+var commentEditForm = document.getElementById("editCommentForm");
+
+var commentEditBtn = document.querySelectorAll('.comment-edit-button');
+var commentDeleteBtn = document.querySelectorAll('.comment-delete-button');
+commentEditBtn.forEach((target) => target.addEventListener("click", function(){
+            commentEditLayer.style.display = "flex";
+            commentEditContentField.value = document.getElementById(target.dataset.commentContent).innerText;
+            commentEditSnField.value = target.dataset.commentSn;
+		})
+);
+
+document.getElementById("editContentBtn").addEventListener("click", () => {
+    commentEditForm.action = "/board/user/forum/comment/[[${view.boardSn}]]/"+commentEditSnField.value;
+    commentEditForm.submit();
+});
+
+    var deleteBoardBtn = document.getElementById("boardDeleteBtn");
+    deleteBoardBtn.addEventListener("click", () => {
         if(confirm("정말 삭제하시겠습니까? ")){
             //XMLHttpRequest 객체 생성
             var xhr = new XMLHttpRequest();
@@ -114,4 +137,27 @@ if([[${message}]] != null){
             }
         }
     });
+    commentDeleteBtn.forEach((target) => target.addEventListener("click", function(){
+        if(confirm("정말 삭제하시겠습니까? ")){
+            //XMLHttpRequest 객체 생성
+            var xhr = new XMLHttpRequest();
+
+            //요청을 보낼 방식, url, 비동기여부 설정
+            xhr.open('DELETE', '/board/user/forum/comment/[[${view.boardSn}]]/'+target.dataset.commentSn, true);
+
+            //요청 전송
+            xhr.send();
+
+            //Callback
+            xhr.onload = () => {
+                if (xhr.status == 200) {
+                    //success
+                    alert(xhr.response);
+                    location.href = "/board/user/forum/[[${view.boardSn}]]";
+                } else {
+                    alert(xhr.response);
+                }
+            }
+        }
+	}));
 </script>

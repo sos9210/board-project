@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -38,5 +40,25 @@ public class CommentServiceImpl implements CommentService {
     public Page<BoardCommentDTO> commentList(BoardCommentDTO commentDTO, Pageable pageable) {
         return commentRepository.findByCommentList(commentDTO,pageable);
     }
+
+    @Override
+    public Long editComment(BoardCommentDTO commentDTO) {
+        BoardComment findBoardComment = commentRepository.findByBoardCommentSnAndBoardBoardSn(commentDTO.getBoardCommentSn(), commentDTO.getBoardSn()).orElseThrow(
+                () -> new NoSuchElementException("해당 댓글을 찾을 수 없습니다.")
+        );
+        BoardComment boardComment = findBoardComment;
+        boardComment.editComment(commentDTO);
+        return boardComment.getBoardCommentSn();
+    }
+
+    @Override
+    public void deleteComment(BoardCommentDTO commentDTO) {
+        BoardComment findBoardComment = commentRepository.findByBoardCommentSnAndBoardBoardSn(commentDTO.getBoardCommentSn(), commentDTO.getBoardSn()).orElseThrow(
+                () -> new NoSuchElementException("해당 댓글을 찾을 수 없습니다.")
+        );
+        BoardComment boardComment = findBoardComment;
+        boardComment.deleteComment(commentDTO);
+    }
+
 
 }

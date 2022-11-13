@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class BoardCommentDTO {
     @QueryProjection
-    public BoardCommentDTO(String memberId, Long boardSn, String content, String deleteYn, LocalDateTime registDate) {
+    public BoardCommentDTO(Long boardCommentSn,String memberId, Long boardSn, String content, String deleteYn, LocalDateTime registDate) {
+        this.boardCommentSn = boardCommentSn;
         this.memberId = memberId;
-        BoardSn = boardSn;
+        this.BoardSn = boardSn;
         this.content = content;
         this.deleteYn = deleteYn;
         this.registDate = registDate;

@@ -1,5 +1,6 @@
 package com.example.board.domain;
 
+import com.example.board.dto.BoardCommentDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,4 +38,16 @@ public class BoardComment {
     private String registIp;                //등록IP
     private LocalDateTime updateDate;       //수정일자
     private String updateIp;                //수정IP
+
+    public void editComment(BoardCommentDTO dto) {
+        this.updateDate = dto.getUpdateDate();
+        this.updateIp = dto.getUpdateIp();
+        this.content = dto.getContent();
+    }
+
+    public void deleteComment(BoardCommentDTO dto) {
+        this.deleteYn = dto.getDeleteYn();
+        this.updateDate = dto.getUpdateDate();
+        this.updateIp = dto.getUpdateIp();
+    }
 }
