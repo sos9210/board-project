@@ -39,6 +39,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustomer{
 
         List<BoardCommentDTO> commentList = queryFactory
                 .select(new QBoardCommentDTO(
+                        comment.boardCommentSn,
                         comment.member.memberId,
                         comment.board.boardSn,
                         comment.content,

@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -74,5 +75,62 @@ public class CommentRepositoryTest {
         //then
         Assertions.assertEquals(20L,byCommentList.getTotalElements());
         Assertions.assertEquals(10,byCommentList.getContent().size());
+    }
+    @Test
+    void 게시물_코멘트상세조회(){
+        //given
+        Pageable pageable = PageRequest.of(0,10);
+
+        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        em.persist(member);
+        Board board = new Board("title","content",member,"N",LocalDateTime.now(),"127.0.0.1");
+        em.persist(board);
+
+        BoardComment comment = new BoardComment("title",member,board,"N",LocalDateTime.now(),"127.0.0.1");
+        em.persist(comment);
+
+        em.flush();
+        em.clear();
+
+        //when
+        BoardCommentDTO commentDTO = new BoardCommentDTO();
+        commentDTO.setBoardSn(board.getBoardSn());
+        BoardComment findComment = commentRepository.findByBoardCommentSnAndBoardBoardSn(comment.getBoardCommentSn(),board.getBoardSn()).get();
+
+
+        //then
+        Assertions.assertEquals(findComment.getBoardCommentSn(),comment.getBoardCommentSn());
+        Assertions.assertEquals(findComment.getBoard().getBoardSn(),board.getBoardSn());
+    }
+
+    @Test
+    void 게시물_코멘트삭제() {
+        //given
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Member member = new Member("asd1", "hong", "pass", "1", LocalDateTime.now(), "127.0.0.1");
+        em.persist(member);
+        Board board = new Board("title", "content", member, "N", LocalDateTime.now(), "127.0.0.1");
+        em.persist(board);
+
+        BoardComment comment = new BoardComment("title", member, board, "N", LocalDateTime.now(), "127.0.0.1");
+        em.persist(comment);
+
+        //when
+        BoardCommentDTO commentDTO = new BoardCommentDTO();
+
+        commentDTO.setUpdateDate(LocalDateTime.now());
+        commentDTO.setUpdateIp("127.0.0.1");
+        commentDTO.setDeleteYn("Y");
+        comment.deleteComment(commentDTO);
+
+        em.flush();
+        em.clear();
+
+        //then
+        BoardComment findComment = commentRepository.findByBoardCommentSnAndBoardBoardSn(comment.getBoardCommentSn(), board.getBoardSn()).get();
+
+        Assertions.assertEquals(findComment.getDeleteYn(),"Y");
+
     }
 }
