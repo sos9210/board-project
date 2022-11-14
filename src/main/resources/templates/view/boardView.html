@@ -68,19 +68,19 @@
                     <div>
                         <ul class="pagination" th:if="${commentList.size > 0}">
                             <li class="page-item" th:if="${page.hasPrevious}">
-                                <a class="page-link" href="#" th:href="@{/board/user/forums(page=1)}" >&laquo;</a>
+                                <a class="page-link" href="#" th:href="@{/board/user/forum/{boardSn}(boardSn=${view.boardSn},page=1)}" >&laquo;</a>
                             </li>
                             <li class="page-item" th:if="${!page.first}">
-                                <a class="page-link" href="#" th:href="@{/board/user/forums(page=${page.number})}">&lt;</a>
+                                <a class="page-link" href="#" th:href="@{/board/user/forum/{boardSn}(boardSn=${view.boardSn},page=${page.number})}">&lt;</a>
                             </li>
                             <li class="page-item" th:each="number:${#numbers.sequence(startPage,endPage)}" th:classappend="${(pageable.pageNumber+1) == number} ? 'active'">
-                                <a class="page-link" href="#" th:text="${number}" th:href="@{/board/user/forums(page=${number})}">1</a>
+                                <a class="page-link" href="#" th:text="${number}" th:href="@{/board/user/forum/{boardSn}(boardSn=${view.boardSn},page=${number})}">1</a>
                             </li>
                             <li class="page-item" th:if="${!page.last}">
-                                <a class="page-link" href="#" th:href="@{/board/user/forums(page=${page.number + 2})}">&gt;</a>
+                                <a class="page-link" href="#" th:href="@{/board/user/forum/{boardSn}(boardSn=${view.boardSn},page=${page.number + 2})}">&gt;</a>
                             </li>
                             <li class="page-item" th:if="${page.hasNext}">
-                                <a class="page-link" href="#" th:href="@{/board/user/forums(page=${page.totalPages})}">&raquo;</a>
+                                <a class="page-link" href="#" th:href="@{/board/user/forum/{boardSn}(boardSn=${view.boardSn},page=${page.totalPages})}">&raquo;</a>
                             </li>
                         </ul>
                     </div>
@@ -100,13 +100,14 @@ var commentEditSnField = document.getElementById("boardCommentSn");
 var commentEditForm = document.getElementById("editCommentForm");
 
 var commentEditBtn = document.querySelectorAll('.comment-edit-button');
-var commentDeleteBtn = document.querySelectorAll('.comment-delete-button');
-commentEditBtn.forEach((target) => target.addEventListener("click", function(){
-            commentEditLayer.style.display = "flex";
-            commentEditContentField.value = document.getElementById(target.dataset.commentContent).innerText;
-            commentEditSnField.value = target.dataset.commentSn;
-		})
-);
+if(commentEditBtn != null) {
+    commentEditBtn.forEach((target) => target.addEventListener("click", function(){
+                commentEditLayer.style.display = "flex";
+                commentEditContentField.value = document.getElementById(target.dataset.commentContent).innerText;
+                commentEditSnField.value = target.dataset.commentSn;
+            })
+    );
+}
 
 document.getElementById("editContentBtn").addEventListener("click", () => {
     commentEditForm.action = "/board/user/forum/comment/[[${view.boardSn}]]/"+commentEditSnField.value;
@@ -114,50 +115,55 @@ document.getElementById("editContentBtn").addEventListener("click", () => {
 });
 
     var deleteBoardBtn = document.getElementById("boardDeleteBtn");
-    deleteBoardBtn.addEventListener("click", () => {
-        if(confirm("정말 삭제하시겠습니까? ")){
-            //XMLHttpRequest 객체 생성
-            var xhr = new XMLHttpRequest();
+    if(deleteBoardBtn != null){
+        deleteBoardBtn.addEventListener("click", () => {
+            if(confirm("정말 삭제하시겠습니까? ")){
+                //XMLHttpRequest 객체 생성
+                var xhr = new XMLHttpRequest();
 
-            //요청을 보낼 방식, url, 비동기여부 설정
-            xhr.open('DELETE', '/board/user/forum/[[${view.boardSn}]]', true);
+                //요청을 보낼 방식, url, 비동기여부 설정
+                xhr.open('DELETE', '/board/user/forum/[[${view.boardSn}]]', true);
 
-            //요청 전송
-            xhr.send();
+                //요청 전송
+                xhr.send();
 
-            //Callback
-            xhr.onload = () => {
-                if (xhr.status == 200) {
-                    //success
-                    alert(xhr.response);
-                    location.href = "/board/user/forums";
-                } else {
-                    alert(xhr.response);
+                //Callback
+                xhr.onload = () => {
+                    if (xhr.status == 200) {
+                        //success
+                        alert(xhr.response);
+                        location.href = "/board/user/forums";
+                    } else {
+                        alert(xhr.response);
+                    }
                 }
             }
-        }
-    });
-    commentDeleteBtn.forEach((target) => target.addEventListener("click", function(){
-        if(confirm("정말 삭제하시겠습니까? ")){
-            //XMLHttpRequest 객체 생성
-            var xhr = new XMLHttpRequest();
+        });
+    }
+    var commentDeleteBtn = document.querySelectorAll('.comment-delete-button');
+    if(commentDeleteBtn != null){
+        commentDeleteBtn.forEach((target) => target.addEventListener("click", function(){
+            if(confirm("정말 삭제하시겠습니까? ")){
+                //XMLHttpRequest 객체 생성
+                var xhr = new XMLHttpRequest();
 
-            //요청을 보낼 방식, url, 비동기여부 설정
-            xhr.open('DELETE', '/board/user/forum/comment/[[${view.boardSn}]]/'+target.dataset.commentSn, true);
+                //요청을 보낼 방식, url, 비동기여부 설정
+                xhr.open('DELETE', '/board/user/forum/comment/[[${view.boardSn}]]/'+target.dataset.commentSn, true);
 
-            //요청 전송
-            xhr.send();
+                //요청 전송
+                xhr.send();
 
-            //Callback
-            xhr.onload = () => {
-                if (xhr.status == 200) {
-                    //success
-                    alert(xhr.response);
-                    location.href = "/board/user/forum/[[${view.boardSn}]]";
-                } else {
-                    alert(xhr.response);
+                //Callback
+                xhr.onload = () => {
+                    if (xhr.status == 200) {
+                        //success
+                        alert(xhr.response);
+                        location.href = "/board/user/forum/[[${view.boardSn}]]";
+                    } else {
+                        alert(xhr.response);
+                    }
                 }
             }
-        }
-	}));
+        }));
+	}
 </script>
