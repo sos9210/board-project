@@ -56,6 +56,9 @@ public class BoardController {
         model.addAttribute("page",boardDTOPage);
         model.addAttribute("boardList",boardDTOPage.getContent());
         model.addAttribute("totalElements",totalElements);
+
+        model.addAttribute("searchCondition",dto.getSearchCondition());
+        model.addAttribute("searchKeyword",dto.getSearchKeyword());
         return "view/boardForums";
     }
 

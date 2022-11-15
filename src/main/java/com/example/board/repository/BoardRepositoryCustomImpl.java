@@ -32,8 +32,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .select(board.count())
                 .from(board)
                 .where(
-                        subjectEq(search.getSubject()),
-                        contentEq(search.getContent()),
+                        searchKeyword(search),
                         deleteYnEq("N")
                 );
 
@@ -48,8 +47,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 ))
                 .from(board)
                 .where(
-                        subjectEq(search.getSubject()),
-                        contentEq(search.getContent()),
+                        searchKeyword(search),
                         deleteYnEq("N")
                 )
                 .orderBy(board.registDate.desc())
@@ -60,11 +58,17 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         return PageableExecutionUtils.getPage(boardList, pageable,  countQuery::fetchOne);
     }
 
-    private Predicate subjectEq(String subject){
-        return StringUtils.hasText(subject) ? board.subject.eq(subject) : null;
-    }
-    private Predicate contentEq(String content){
-        return StringUtils.hasText(content) ? board.content.eq(content) : null;
+    private Predicate searchKeyword(BoardDTO search){
+        //전체
+        if(search.getSearchCondition() == null || search.getSearchCondition().equals("0")){
+            return StringUtils.hasText(search.getSearchKeyword()) ?
+                board.subject.contains(search.getSearchKeyword()).or(board.content.contains(search.getSearchKeyword())) : null;
+        }else if(search.getSearchCondition().equals("1")){    //제목
+            return StringUtils.hasText(search.getSearchKeyword()) ? board.subject.contains(search.getSearchKeyword()) : null;
+        }else if(search.getSearchCondition().equals("2")){//내용
+            return StringUtils.hasText(search.getSearchKeyword()) ? board.content.contains(search.getSearchKeyword()) : null;
+        }
+        return null;
     }
     private Predicate deleteYnEq(String deleteYn){
         return board.deleteYn.eq("N");
