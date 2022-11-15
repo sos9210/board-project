@@ -28,6 +28,9 @@ public class BoardDTO {
     private LocalDateTime updateDate;       //수정일자
     private String updateIp;                //수정IP
 
+    private String searchCondition;         //검색조건
+    private String searchKeyword;           //검색어
+    
     private AttachFile attachFile;
 
 
