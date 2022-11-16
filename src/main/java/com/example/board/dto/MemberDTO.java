@@ -1,6 +1,8 @@
 package com.example.board.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MemberDTO {
     @NotBlank(message = "{error.required.input}") @NotNull(message = "{error.required.input}")
     @Size(min = 6, max = 20, message = "{error.size.input}")
@@ -28,4 +31,11 @@ public class MemberDTO {
     private String registIp;                //등록IP
     private LocalDateTime updateDate;       //수정일자
     private String updateIp;                //수정IP
+
+    @QueryProjection
+    public MemberDTO(String memberId, String memberName,LocalDateTime registDate) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.registDate = registDate;
+    }
 }
