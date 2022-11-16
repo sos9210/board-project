@@ -16,9 +16,10 @@ public class MemberManagementController {
 
     private final MemberService memberService;
 
-    @GetMapping("/board/admin/member")
-    public String managementMembers(MemberDTO dto, Pageable pageable, Model model){
-        Page<MemberDTO> memberDTOPage = memberService.listMember(dto, pageable);
+    @GetMapping("/board/admin/members")
+    public String managementMembers(Pageable pageable, Model model){
+
+        Page<MemberDTO> memberDTOPage = memberService.findMembers(pageable);
         long totalElements = memberDTOPage.getTotalElements();
         int startPage = Math.max(1,memberDTOPage.getPageable().getPageNumber() - pageable.getPageSize());
         int endPage = Math.min(memberDTOPage.getTotalPages(), memberDTOPage.getPageable().getPageNumber() + pageable.getPageSize());

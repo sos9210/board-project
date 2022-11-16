@@ -54,19 +54,19 @@
             <div>
                 <ul class="pagination" th:if="${boardList.size > 0}">
                     <li class="page-item" th:if="${page.hasPrevious}">
-                        <a class="page-link" href="#" th:href="@{/board/user/forums(page=1)}" >&laquo;</a>
+                        <a class="page-link" href="#" th:href="@{/board/admin/members(page=1)}" >&laquo;</a>
                     </li>
                     <li class="page-item" th:if="${!page.first}">
-                        <a class="page-link" href="#" th:href="@{/board/user/forums(page=${page.number})}">&lt;</a>
+                        <a class="page-link" href="#" th:href="@{/board/admin/members(page=${page.number})}">&lt;</a>
                     </li>
                     <li class="page-item" th:each="number:${#numbers.sequence(startPage,endPage)}" th:classappend="${(pageable.pageNumber+1) == number} ? 'active'">
-                        <a class="page-link" href="#" th:text="${number}" th:href="@{/board/user/forums(page=${number})}">1</a>
+                        <a class="page-link" href="#" th:text="${number}" th:href="@{/board/admin/members(page=${number})}">1</a>
                     </li>
                     <li class="page-item" th:if="${!page.last}">
-                        <a class="page-link" href="#" th:href="@{/board/user/forums(page=${page.number + 2})}">&gt;</a>
+                        <a class="page-link" href="#" th:href="@{/board/admin/members(page=${page.number + 2})}">&gt;</a>
                     </li>
                     <li class="page-item" th:if="${page.hasNext}">
-                        <a class="page-link" href="#" th:href="@{/board/user/forums(page=${page.totalPages})}">&raquo;</a>
+                        <a class="page-link" href="#" th:href="@{/board/admin/members(page=${page.totalPages})}">&raquo;</a>
                     </li>
                 </ul>
             </div>

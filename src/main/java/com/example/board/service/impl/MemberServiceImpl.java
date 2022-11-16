@@ -1,9 +1,12 @@
 package com.example.board.service.impl;
 
 import com.example.board.domain.Member;
+import com.example.board.dto.MemberDTO;
 import com.example.board.repository.MemberRepository;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -36,6 +39,11 @@ public class MemberServiceImpl implements MemberService {
     public Member findMember(String memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
         return findMember.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+
+    @Override
+    public Page<MemberDTO> findMembers(Pageable pageable) {
+        return memberRepository.findMembers(pageable);
     }
 
     @Override

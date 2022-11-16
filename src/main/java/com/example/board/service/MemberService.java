@@ -11,5 +11,5 @@ public interface MemberService  extends UserDetailsService {
     String joinMember(Member member);
     PasswordEncoder passwordEncoder();
     Member findMember(String memberId);
-    Page<MemberDTO> listMember(MemberDTO dto, Pageable pageable);
+    Page<MemberDTO> findMembers(Pageable pageable);
 }
