@@ -47,6 +47,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public String editMember(MemberDTO dto) {
+        Member findMember = memberRepository.findByMemberIdAndPassword(dto.getMemberId(), dto.getPassword()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        findMember.memberEdit(dto);
+
+        return findMember.getMemberId();
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member findByMember = memberRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username));
         return new User(findByMember.getMemberId(),findByMember.getPassword(),authorities(findByMember.getAuthLevel()));

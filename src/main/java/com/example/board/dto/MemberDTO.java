@@ -27,6 +27,7 @@ public class MemberDTO {
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$", message = "{error.pattern.password}")
     private String password;                //암호
     private String authLevel;               //권한등급
+    private String deleteYn;                //탈퇴여부
     private LocalDateTime registDate;       //등록일자
     private String registIp;                //등록IP
     private LocalDateTime updateDate;       //수정일자

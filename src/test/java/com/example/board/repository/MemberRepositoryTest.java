@@ -35,7 +35,7 @@ class MemberRepositoryTest {
     @Test
     void 회원등록() {
         //given
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         Member saveMember = memberRepository.save(member);
 
         //when
@@ -45,13 +45,32 @@ class MemberRepositoryTest {
         Assertions.assertEquals(saveMember.getMemberId(), findMember.getMemberId());
         Assertions.assertEquals(saveMember, findMember);
     }
+    @Test
+    void 회원수정() {
+        //given
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
+        Member saveMember = memberRepository.save(member);
+
+        //when
+        Member findMember = memberRepository.findByMemberIdAndPassword("asd1","pass").orElseGet(() -> new Member());
+        MemberDTO dto = new MemberDTO();
+        dto.setMemberName("hohoho");
+        findMember.memberEdit(dto);
+        em.flush();
+        em.clear();
+
+        //then
+        Member resultMember = memberRepository.findByMemberIdAndPassword("asd1","pass").orElseGet(() -> new Member());
+        Assertions.assertEquals(saveMember.getMemberId(), resultMember.getMemberId());
+        Assertions.assertEquals("hohoho", resultMember.getMemberName());
+    }
 
 
     @DisplayName("회원조회")
     @Test
     void 회원조회() {
         //given
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         Member saveMember = memberRepository.save(member);
 
         //when
@@ -72,7 +91,7 @@ class MemberRepositoryTest {
         Pageable pageable = PageRequest.of(0,10);
 
         for (int i = 0; i < 20; i++) {
-            Member member = new Member("asd1"+i,"hong"+i,"pass","1", LocalDateTime.now(),"127.0.0.1");
+            Member member = new Member("asd1"+i,"hong"+i,"pass","1","N", LocalDateTime.now(),"127.0.0.1");
             em.persist(member);
         }
         em.flush();

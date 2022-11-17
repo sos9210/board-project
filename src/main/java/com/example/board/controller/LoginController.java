@@ -7,10 +7,13 @@ import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,6 +60,30 @@ public class LoginController {
         return "view/memberJoinForm";
     }
 
+    @GetMapping("board/user/member-edit")
+    public String memberEditForm(@AuthenticationPrincipal User user,MemberDTO dto, Model model) {
+
+        String userId = user.getUsername();
+        Member member = memberService.findMember(userId);
+
+        model.addAttribute("member",member);
+        model.addAttribute("memberDTO",dto);
+
+        return "view/memberEditForm";
+    }
+    @PostMapping("board/user/member-edit")
+    public String memberEdit(@Valid MemberDTO dto, Errors error,@AuthenticationPrincipal User user, Model model) {
+        if(error.hasErrors() && !error.getFieldError().getField().equals("memberId")){
+            log.info("formError : {}",error.getFieldError().getDefaultMessage());
+            return "view/memberJoinForm";
+        }
+        dto.setMemberId(user.getUsername());
+        dto.setPassword(memberService.passwordEncoder().encode(dto.getPassword()));
+        memberService.editMember(dto);
+
+        return "redirect:/board/user/forums";
+    }
+
     @PostMapping("board/user/member-join")
     public String memberJoin(@Valid MemberDTO dto, Errors error,HttpServletRequest request) {
         if(error.hasErrors()){
@@ -64,7 +91,7 @@ public class LoginController {
             return "view/memberJoinForm";
         }
         dto.setAuthLevel(MemberAuthLevelEnum.USER.name());
-        Member member = new Member(dto.getMemberId(),dto.getMemberName(),dto.getPassword(),dto.getAuthLevel(), LocalDateTime.now(),request.getRemoteAddr());
+        Member member = new Member(dto.getMemberId(),dto.getMemberName(),dto.getPassword(),dto.getAuthLevel(), "N",LocalDateTime.now(),request.getRemoteAddr());
 
         try{
             memberService.joinMember(member);

@@ -30,6 +30,7 @@ public class MemberRepositoryCustomerImpl implements MemberRepositoryCustomer{
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(member.count())
+                .where(member.deleteYn.eq("N"))
                 .from(member);
 
 
@@ -42,6 +43,7 @@ public class MemberRepositoryCustomerImpl implements MemberRepositoryCustomer{
                         )
                 )
                 .from(member)
+                .where(member.deleteYn.eq("N"))
                 .orderBy(member.registDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
