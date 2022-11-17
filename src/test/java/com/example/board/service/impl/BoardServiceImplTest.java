@@ -48,7 +48,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_상세조회() throws IOException {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
         given(boardRepository.save(board)).willReturn(board);
         Long boardSn = boardService.writeBoard(board, new MockMultipartHttpServletRequest());
@@ -66,7 +66,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_상세_첨부파일조회() throws IOException {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
         AttachFile attachFile = new AttachFile("realName.docs","123123.docs","docs",12312,"/data/file",board,LocalDateTime.now(),"127.0.0.1");
 
@@ -88,7 +88,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_삭제() {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
 
         given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
@@ -113,7 +113,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_수정() {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
         ReflectionTestUtils.setField(board,"boardSn",1L);
 
@@ -138,7 +138,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_첨부파일_수정() throws IOException {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
         ReflectionTestUtils.setField(board,"boardSn",1L);
 
@@ -173,7 +173,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_등록() throws IOException {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1", "N",LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
 
         given(boardRepository.save(board)).willReturn(board);
@@ -186,7 +186,7 @@ class BoardServiceImplTest {
     @Test
     void 게시글_첨부파일_등록() throws IOException {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
         ReflectionTestUtils.setField(board,"boardSn",1L);       //가짜 게시판순번 셋팅
 

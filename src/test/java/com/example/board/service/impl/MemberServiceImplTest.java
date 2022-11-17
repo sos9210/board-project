@@ -37,7 +37,7 @@ class MemberServiceImplTest {
     @Test
     void 회원가입을하면_ID를_반환한다() {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         given(memberRepository.save(member)).willReturn(member);
 
         //when
@@ -52,13 +52,13 @@ class MemberServiceImplTest {
     void 회원가입시_중복ID_Exception() {
         //given
         MemberService memberService1 = new MemberServiceImpl(memberRepository);
-        Member member1 = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member1 = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         given(memberRepository.save(member1)).willReturn(member1);
         String member1Id = memberService1.joinMember(member1);
 
         //when
         MemberService memberService2 = new MemberServiceImpl(memberRepository);
-        Member member2 = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member2 = new Member("asd123","user11","asd123!@#","1", "N",LocalDateTime.now(),"127.0.0.1");
         when(memberRepository.findById(member2.getMemberId())).thenReturn(Optional.of(member2));
 
         //then
@@ -76,7 +76,7 @@ class MemberServiceImplTest {
         loginMember.setMemberId("asd123123");
         loginMember.setPassword("asd123!@#");
 
-        Member member = new Member("asd123123","user11",encodePassword, MemberAuthLevelEnum.USER.name(), LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123123","user11",encodePassword, MemberAuthLevelEnum.USER.name(), "N",LocalDateTime.now(),"127.0.0.1");
         given(memberRepository.findById(member.getMemberId())).willReturn(Optional.of(member));
 
         //when
@@ -90,7 +90,7 @@ class MemberServiceImplTest {
     @Test
     void 찾을_수_없는_회원_로그인_시도() {
         //given
-        Member member = new Member("asd123", "user11", "Asd123!@#", MemberAuthLevelEnum.USER.name(), LocalDateTime.now(), "127.0.0.1");
+        Member member = new Member("asd123", "user11", "Asd123!@#", MemberAuthLevelEnum.USER.name(), "N",LocalDateTime.now(), "127.0.0.1");
 
         given(memberRepository.save(member)).willReturn(member);
         memberService.joinMember(member);
@@ -105,4 +105,25 @@ class MemberServiceImplTest {
 
     }
 
+    @Test
+    void 회원정보수정() {
+        //given
+        PasswordEncoder delegatingPasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        String encodePassword = delegatingPasswordEncoder.encode("Asd123!@#");
+
+        Member member = new Member("asd123", "user11", encodePassword, MemberAuthLevelEnum.USER.name(), "N",LocalDateTime.now(), "127.0.0.1");
+
+        given(memberRepository.findByMemberIdAndPassword("asd123",encodePassword)).willReturn(Optional.of(member));
+
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setMemberName("hohoho");
+        memberDTO.setPassword(encodePassword);
+        memberDTO.setMemberId("asd123");
+
+        //when
+        String memberId = memberService.editMember(memberDTO);
+
+        //then
+        Assertions.assertEquals("asd123",memberId);
+    }
 }

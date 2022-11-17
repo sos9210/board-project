@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragment/layout}">
+<div layout:fragment="content" class="container">
+    <div class="bs-docs-section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header">
+                    <h1 id="forms">회원가입</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <form id="memberEditForm" name="memberEditForm" th:object="${memberDTO}" method="POST">
+                        <div class="form-floating mb-3">
+                            <input type="text" th:value="${member.memberName}" th:classappend="${#fields.hasErrors('memberName')} ? is-invalid" class="form-control" id="memberName" name="memberName">
+                            <label for="memberName">이름</label>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('memberName')}"
+                            th:errors="*{memberName}">이름을 입력해 주세요.</div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input th:field="*{memberId}" disabled="disabled" th:value="${member.memberId}" type="text" id="memberId" name="memberId" class="form-control" placeholder="Recipient's username">
+                            <label for="memberId" th:text="${member.memberId}"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input th:field="*{password}" type="password" th:classappend="${#fields.hasErrors('password')} ? is-invalid" class="form-control" id="password" name="password" >
+                            <label for="password">패스워드</label>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                            th:errors="*{password}">패스워드를 입력해 주세요.</div>
+                        </div>
+                    <button type="submit" class="btn btn-success">수정</button>
+                    <button type="reset" class="btn btn-secondary">취소</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

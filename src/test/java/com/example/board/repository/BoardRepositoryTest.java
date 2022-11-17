@@ -49,7 +49,7 @@ class BoardRepositoryTest {
     @Test
     void 게시글_등록_상세조회(){
         //given
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1", "N",LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
 
         em.persist(board);
@@ -64,7 +64,7 @@ class BoardRepositoryTest {
     @Test
     void 게시글_등록_상세조회_첨부파일조회(){
         //given
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
         AttachFile attachFile = new AttachFile("realName.docs","123123.docs","docs",12312,"/data/file",board,LocalDateTime.now(),"127.0.0.1");
 
@@ -85,7 +85,7 @@ class BoardRepositoryTest {
     @Test
     void 게시글_삭제() {
         //given
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
 
         em.persist(member);
@@ -111,7 +111,7 @@ class BoardRepositoryTest {
         queryFactory = new JPAQueryFactory(em);
         Pageable pageable = PageRequest.of(0,10);
 
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         em.persist(member);
 
         for (int i = 0; i < 20; i++) {

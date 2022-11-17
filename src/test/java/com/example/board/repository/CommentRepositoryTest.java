@@ -32,7 +32,7 @@ public class CommentRepositoryTest {
     @Test
     void 코멘트_등록() {
         //given
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("title111","content222",member,"N",LocalDateTime.now(),"127.0.0.1");
 
         em.persist(member);
@@ -55,7 +55,7 @@ public class CommentRepositoryTest {
         //given
         Pageable pageable = PageRequest.of(0,10);
 
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1", "N",LocalDateTime.now(),"127.0.0.1");
         em.persist(member);
         Board board = new Board("title","content",member,"N",LocalDateTime.now(),"127.0.0.1");
         em.persist(board);
@@ -81,7 +81,7 @@ public class CommentRepositoryTest {
         //given
         Pageable pageable = PageRequest.of(0,10);
 
-        Member member = new Member("asd1","hong","pass","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd1","hong","pass","1","N", LocalDateTime.now(),"127.0.0.1");
         em.persist(member);
         Board board = new Board("title","content",member,"N",LocalDateTime.now(),"127.0.0.1");
         em.persist(board);
@@ -108,7 +108,7 @@ public class CommentRepositoryTest {
         //given
         Pageable pageable = PageRequest.of(0, 10);
 
-        Member member = new Member("asd1", "hong", "pass", "1", LocalDateTime.now(), "127.0.0.1");
+        Member member = new Member("asd1", "hong", "pass", "1","N", LocalDateTime.now(), "127.0.0.1");
         em.persist(member);
         Board board = new Board("title", "content", member, "N", LocalDateTime.now(), "127.0.0.1");
         em.persist(board);

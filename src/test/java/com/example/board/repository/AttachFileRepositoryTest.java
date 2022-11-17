@@ -28,7 +28,7 @@ class AttachFileRepositoryTest {
     @Test
     void 파일_저장() {
         //given
-        Member member = new Member("asd123","user11","asd123!@#","1", LocalDateTime.now(),"127.0.0.1");
+        Member member = new Member("asd123","user11","asd123!@#","1","N", LocalDateTime.now(),"127.0.0.1");
         Board board = new Board("안녕하세요.","새로 가입한 홍길동 입니다.",member, "N",LocalDateTime.now(),"127.0.0.1");
         em.persist(member);
         em.persist(board);
