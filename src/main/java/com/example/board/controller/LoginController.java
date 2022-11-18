@@ -6,8 +6,12 @@ import com.example.board.enums.MemberAuthLevelEnum;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +33,7 @@ import java.time.LocalDateTime;
 public class LoginController {
 
     private final MemberService memberService;
+    private final AuthenticationManager authenticationManager;
 
     @GetMapping("board/user/login")
     public String memberLoginForm() {
@@ -66,20 +72,25 @@ public class LoginController {
         String userId = user.getUsername();
         Member member = memberService.findMember(userId);
 
-        model.addAttribute("member",member);
+        dto.setMemberName(member.getMemberName());
         model.addAttribute("memberDTO",dto);
 
         return "view/memberEditForm";
     }
     @PostMapping("board/user/member-edit")
-    public String memberEdit(@Valid MemberDTO dto, Errors error,@AuthenticationPrincipal User user, Model model) {
+    public String memberEdit(@ModelAttribute("memberDTO") @Valid MemberDTO member, Errors error, @AuthenticationPrincipal User user, Model model) {
         if(error.hasErrors() && !error.getFieldError().getField().equals("memberId")){
             log.info("formError : {}",error.getFieldError().getDefaultMessage());
-            return "view/memberJoinForm";
+            return "view/memberEditForm";
         }
-        dto.setMemberId(user.getUsername());
-        dto.setPassword(memberService.passwordEncoder().encode(dto.getPassword()));
-        memberService.editMember(dto);
+
+        String rawPassword = member.getPassword();
+
+        member.setMemberId(user.getUsername());
+        Member editMember = memberService.editMember(member);
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(editMember.getMemberId(), rawPassword));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return "redirect:/board/user/forums";
     }

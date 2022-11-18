@@ -11,6 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -113,7 +118,7 @@ class MemberServiceImplTest {
 
         Member member = new Member("asd123", "user11", encodePassword, MemberAuthLevelEnum.USER.name(), "N",LocalDateTime.now(), "127.0.0.1");
 
-        given(memberRepository.findByMemberIdAndPassword("asd123",encodePassword)).willReturn(Optional.of(member));
+        given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
 
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setMemberName("hohoho");
@@ -121,9 +126,9 @@ class MemberServiceImplTest {
         memberDTO.setMemberId("asd123");
 
         //when
-        String memberId = memberService.editMember(memberDTO);
+        Member editMember = memberService.editMember(memberDTO);
 
         //then
-        Assertions.assertEquals("asd123",memberId);
+        Assertions.assertEquals("asd123",editMember.getMemberId());
     }
 }
