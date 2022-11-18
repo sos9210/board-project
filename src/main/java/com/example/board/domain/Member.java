@@ -44,6 +44,7 @@ public class Member {
     }
 
     public void memberEdit(MemberDTO dto){
+        this.password = dto.getPassword();
         this.memberName = dto.getMemberName();
     }
 }

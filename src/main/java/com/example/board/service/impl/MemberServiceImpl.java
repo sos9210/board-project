@@ -7,8 +7,12 @@ import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,12 +51,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String editMember(MemberDTO dto) {
-        Member findMember = memberRepository.findByMemberIdAndPassword(dto.getMemberId(), dto.getPassword()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public Member editMember(MemberDTO dto) {
 
+        Member findMember = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        dto.setPassword(passwordEncoder().encode(dto.getPassword()));
         findMember.memberEdit(dto);
 
-        return findMember.getMemberId();
+        return findMember;
     }
 
     @Override
