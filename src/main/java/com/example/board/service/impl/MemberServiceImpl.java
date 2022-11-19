@@ -61,8 +61,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void memberSecession(String memberId) {
+        Member findByMember = memberRepository.findById(memberId).orElseThrow(() -> new UsernameNotFoundException(memberId));
+        findByMember.memberSecession();
+
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member findByMember = memberRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        if(findByMember.getDeleteYn().equals("Y")){
+            throw new UsernameNotFoundException(username);
+        }
         return new User(findByMember.getMemberId(),findByMember.getPassword(),authorities(findByMember.getAuthLevel()));
     }
 

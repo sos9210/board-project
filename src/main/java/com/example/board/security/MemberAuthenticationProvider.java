@@ -21,6 +21,7 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         User user = (User) memberService.loadUserByUsername(username);
+
         if(!matchPassword(password, user.getPassword())) {
             throw new BadCredentialsException(username);
         }
