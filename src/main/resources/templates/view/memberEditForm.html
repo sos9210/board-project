@@ -34,9 +34,38 @@
                     <button type="submit" class="btn btn-success">수정</button>
                     <button type="reset" class="btn btn-secondary">취소</button>
                     </form>
+                    <button type="button" id="memberSecession" class="btn btn-danger">회원탈퇴</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 </html>
+<script>
+        var memberSecession = document.getElementById("memberSecession");
+    if(memberSecession != null){
+        memberSecession.addEventListener("click", () => {
+            if(confirm("정말 탈퇴하시겠습니까? ")){
+                //XMLHttpRequest 객체 생성
+                var xhr = new XMLHttpRequest();
+
+                //요청을 보낼 방식, url, 비동기여부 설정
+                xhr.open('DELETE', '/board/user/member-secession', true);
+
+                //요청 전송
+                xhr.send();
+
+                //Callback
+                xhr.onload = () => {
+                    if (xhr.status == 200) {
+                        //success
+                        alert(xhr.response);
+                        location.href = "/board/user/login";
+                    } else {
+                        alert(xhr.response);
+                    }
+                }
+            }
+        });
+    }
+</script>

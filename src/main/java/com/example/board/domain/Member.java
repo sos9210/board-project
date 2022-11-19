@@ -47,4 +47,8 @@ public class Member {
         this.password = dto.getPassword();
         this.memberName = dto.getMemberName();
     }
+
+    public void memberSecession() {
+        this.deleteYn = "Y";
+    }
 }

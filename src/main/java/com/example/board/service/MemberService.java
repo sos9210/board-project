@@ -13,4 +13,5 @@ public interface MemberService  extends UserDetailsService {
     Member findMember(String memberId);
     Page<MemberDTO> findMembers(Pageable pageable);
     Member editMember(MemberDTO dto);
+    void memberSecession(String memberId);
 }

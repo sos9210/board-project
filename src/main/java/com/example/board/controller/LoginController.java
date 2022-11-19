@@ -6,6 +6,9 @@ import com.example.board.enums.MemberAuthLevelEnum;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,14 +22,13 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Controller @Slf4j
 @RequiredArgsConstructor
@@ -34,26 +36,14 @@ public class LoginController {
 
     private final MemberService memberService;
     private final AuthenticationManager authenticationManager;
+    private final MessageSource messageSource;
 
-    @GetMapping("board/user/login")
+    @GetMapping("/board/user/login")
     public String memberLoginForm() {
         return "view/loginForm";
     }
 
-    @PostMapping("board/user/login")
-    public String memberLogin(MemberDTO memberDTO) {
-        try{
-            UserDetails userDetails = memberService.loadUserByUsername(memberDTO.getMemberId());
-
-            log.info("사용자 정보 {}",userDetails);
-        }catch (UsernameNotFoundException e){
-            log.info("사용자 정보를 찾을 수 없습니다.",e);
-            throw e;
-        }
-        return "view/loginForm";
-    }
-
-    @GetMapping("board/*/logout")
+    @GetMapping("/board/*/logout")
     public String memberLogout(Authentication auth, HttpServletRequest request, HttpServletResponse response) {
         if(auth != null) {
             new SecurityContextLogoutHandler().logout(request,response,auth);
@@ -61,12 +51,12 @@ public class LoginController {
         return "redirect:/board/user/login";
     }
 
-    @GetMapping("board/user/member-join")
+    @GetMapping("/board/user/member-join")
     public String memberJoinForm(MemberDTO dto) {
         return "view/memberJoinForm";
     }
 
-    @GetMapping("board/user/member-edit")
+    @GetMapping("/board/user/member-edit")
     public String memberEditForm(@AuthenticationPrincipal User user,MemberDTO dto, Model model) {
 
         String userId = user.getUsername();
@@ -77,7 +67,7 @@ public class LoginController {
 
         return "view/memberEditForm";
     }
-    @PostMapping("board/user/member-edit")
+    @PostMapping("/board/user/member-edit")
     public String memberEdit(@ModelAttribute("memberDTO") @Valid MemberDTO member, Errors error, @AuthenticationPrincipal User user, Model model) {
         if(error.hasErrors() && !error.getFieldError().getField().equals("memberId")){
             log.info("formError : {}",error.getFieldError().getDefaultMessage());
@@ -95,7 +85,7 @@ public class LoginController {
         return "redirect:/board/user/forums";
     }
 
-    @PostMapping("board/user/member-join")
+    @PostMapping("/board/user/member-join")
     public String memberJoin(@Valid MemberDTO dto, Errors error,HttpServletRequest request) {
         if(error.hasErrors()){
             log.info("formError : {}",error.getFieldError().getDefaultMessage());
@@ -112,5 +102,22 @@ public class LoginController {
         }
 
         return "redirect:/board/user/login";
+    }
+
+    @ResponseBody
+    @DeleteMapping("/board/user/member-secession")
+    public ResponseEntity<String> memberSecession(@AuthenticationPrincipal User user,Authentication auth,HttpServletRequest request,HttpServletResponse response){
+        if(user == null) {
+            String message = messageSource.getMessage("error.request.common", null, Locale.getDefault());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+        }
+
+        String username = user.getUsername();
+        memberService.memberSecession(username);
+        String message = messageSource.getMessage("secession.success.member", null, Locale.getDefault());
+
+        new SecurityContextLogoutHandler().logout(request,response,auth);
+
+        return ResponseEntity.ok(message);
     }
 }

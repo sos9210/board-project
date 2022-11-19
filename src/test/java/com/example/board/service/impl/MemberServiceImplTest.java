@@ -131,4 +131,19 @@ class MemberServiceImplTest {
         //then
         Assertions.assertEquals("asd123",editMember.getMemberId());
     }
+    @Test
+    void 회원탈퇴처리() {
+        //given
+
+        Member member = new Member("asd123", "user11", "Asd123!@#", MemberAuthLevelEnum.USER.name(), "N",LocalDateTime.now(), "127.0.0.1");
+
+        given(memberRepository.findById("asd123")).willReturn(Optional.of(member));
+
+        //when
+        memberService.memberSecession("asd123");
+
+        //then
+        Assertions.assertEquals(member.getDeleteYn(),"Y");
+        Assertions.assertEquals(member.getMemberId(),"asd123");
+    }
 }
